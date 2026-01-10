@@ -9,6 +9,7 @@ repositories {
 dependencies {
     implementation(project(":techdebt-annotations"))
     implementation(libs.ksp.api)
+    implementation(libs.kotlinx.html)
 }
 
 kotlin {
