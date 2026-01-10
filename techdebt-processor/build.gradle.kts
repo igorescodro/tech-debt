@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.ksp)
 }
 
 repositories {
@@ -9,12 +8,7 @@ repositories {
 
 dependencies {
     implementation(project(":techdebt-annotations"))
-    ksp(project(":techdebt-processor"))
-    implementation(libs.kotlin.stdlib)
-}
-
-tasks.test {
-    useJUnitPlatform()
+    implementation(libs.ksp.api)
 }
 
 kotlin {
