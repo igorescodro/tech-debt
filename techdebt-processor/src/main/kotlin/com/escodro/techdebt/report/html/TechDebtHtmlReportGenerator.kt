@@ -2,6 +2,8 @@ package com.escodro.techdebt.report.html
 
 import com.escodro.techdebt.report.TechDebtItem
 import kotlinx.html.body
+import kotlinx.html.div
+import kotlinx.html.h2
 import kotlinx.html.head
 import kotlinx.html.html
 import kotlinx.html.span
@@ -25,6 +27,12 @@ internal class TechDebtReportGenerator {
      * Generates an HTML report with the tech debt items.
      */
     fun generate(writer: Writer, items: List<TechDebtItem>) {
+        val totalItems = items.size
+        val highItems = items.count { it.priority == "HIGH" }
+        val mediumItems = items.count { it.priority == "MEDIUM" }
+        val lowItems = items.count { it.priority == "LOW" }
+        val noneItems = items.count { it.priority == "NONE" }
+
         writer.appendHTML().html {
             head {
                 style {
@@ -37,6 +45,30 @@ internal class TechDebtReportGenerator {
                 unsafe {
                     +"<h1>Tech Debt Report</h1>"
                 }
+
+                div(classes = "summary-container") {
+                    div(classes = "summary-box total") {
+                        h2 { +totalItems.toString() }
+                        span { +"Total Items" }
+                    }
+                    div(classes = "summary-box high") {
+                        h2 { +highItems.toString() }
+                        span { +"High Priority" }
+                    }
+                    div(classes = "summary-box medium") {
+                        h2 { +mediumItems.toString() }
+                        span { +"Medium Priority" }
+                    }
+                    div(classes = "summary-box low") {
+                        h2 { +lowItems.toString() }
+                        span { +"Low Priority" }
+                    }
+                    div(classes = "summary-box none") {
+                        h2 { +noneItems.toString() }
+                        span { +"No Priority" }
+                    }
+                }
+
                 table {
                     thead {
                         tr {
@@ -80,6 +112,33 @@ private const val TechDebtItemStyle = """
     h1 {
         color: #333;
     }
+    .summary-container {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .summary-box {
+        flex: 1;
+        padding: 20px;
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .summary-box h2 {
+        margin: 0;
+        font-size: 32px;
+    }
+    .summary-box span {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .total { background-color: #4A90E2; }
+    .high { background-color: #E35D5D; }
+    .medium { background-color: #F5A623; }
+    .low { background-color: #4CAF50; }
+    .none { background-color: #9E9E9E; }
     table {
         width: 100%;
         border-collapse: collapse;
