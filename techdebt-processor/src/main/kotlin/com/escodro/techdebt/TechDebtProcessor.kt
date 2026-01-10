@@ -1,7 +1,7 @@
 package com.escodro.techdebt
 
 import com.escodro.techdebt.report.TechDebtItem
-import com.escodro.techdebt.report.html.TechDebtReportGenerator
+import com.escodro.techdebt.report.html.TechDebtHtmlReportGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
@@ -18,7 +18,7 @@ internal class TechDebtProcessor(
     private val environment: SymbolProcessorEnvironment,
 ) : SymbolProcessor {
 
-    private val reportGenerator = TechDebtReportGenerator()
+    private val reportGenerator = TechDebtHtmlReportGenerator()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver

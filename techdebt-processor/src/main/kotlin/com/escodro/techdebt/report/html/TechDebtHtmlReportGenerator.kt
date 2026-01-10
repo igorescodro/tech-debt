@@ -1,6 +1,7 @@
 package com.escodro.techdebt.report.html
 
 import com.escodro.techdebt.report.TechDebtItem
+import kotlinx.html.BODY
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.h2
@@ -21,7 +22,7 @@ import java.io.Writer
 /**
  * Generates an HTML report with the tech debt items.
  */
-internal class TechDebtReportGenerator {
+internal class TechDebtHtmlReportGenerator {
 
     /**
      * Generates an HTML report with the tech debt items.
@@ -37,7 +38,7 @@ internal class TechDebtReportGenerator {
             head {
                 style {
                     unsafe {
-                        +TechDebtItemStyle.trimIndent()
+                        +TECH_DEBT_ITEM_STYLE.trimIndent()
                     }
                 }
             }
@@ -46,55 +47,75 @@ internal class TechDebtReportGenerator {
                     +"<h1>Tech Debt Report</h1>"
                 }
 
-                div(classes = "summary-container") {
-                    div(classes = "summary-box total") {
-                        h2 { +totalItems.toString() }
-                        span { +"Total Items" }
-                    }
-                    div(classes = "summary-box high") {
-                        h2 { +highItems.toString() }
-                        span { +"High Priority" }
-                    }
-                    div(classes = "summary-box medium") {
-                        h2 { +mediumItems.toString() }
-                        span { +"Medium Priority" }
-                    }
-                    div(classes = "summary-box low") {
-                        h2 { +lowItems.toString() }
-                        span { +"Low Priority" }
-                    }
-                    div(classes = "summary-box none") {
-                        h2 { +noneItems.toString() }
-                        span { +"No Priority" }
-                    }
-                }
+                header(
+                    totalItems = totalItems,
+                    highItems = highItems,
+                    mediumItems = mediumItems,
+                    lowItems = lowItems,
+                    noneItems = noneItems
+                )
 
-                table {
-                    thead {
-                        tr {
-                            th { +"Symbol" }
-                            th { +"Description" }
-                            th { +"Ticket" }
-                            th { +"Priority" }
-                        }
-                    }
-                    tbody {
-                        for (item in items) {
-                            tr {
-                                td {
-                                    unsafe {
-                                        +"<strong>${item.name}</strong>"
-                                    }
-                                }
-                                td { +item.description }
-                                td {
-                                    if (item.ticket.isNotEmpty()) {
-                                        span(classes = "ticket") { +item.ticket }
-                                    }
-                                }
-                                td { +item.priority }
+                table(items = items)
+            }
+        }
+    }
+
+    private fun BODY.header(
+        totalItems: Int,
+        highItems: Int,
+        mediumItems: Int,
+        lowItems: Int,
+        noneItems: Int
+    ) {
+        div(classes = "summary-container") {
+            div(classes = "summary-box total") {
+                h2 { +totalItems.toString() }
+                span { +"Total Items" }
+            }
+            div(classes = "summary-box high") {
+                h2 { +highItems.toString() }
+                span { +"High Priority" }
+            }
+            div(classes = "summary-box medium") {
+                h2 { +mediumItems.toString() }
+                span { +"Medium Priority" }
+            }
+            div(classes = "summary-box low") {
+                h2 { +lowItems.toString() }
+                span { +"Low Priority" }
+            }
+            div(classes = "summary-box none") {
+                h2 { +noneItems.toString() }
+                span { +"No Priority" }
+            }
+        }
+    }
+
+    private fun BODY.table(items: List<TechDebtItem>) {
+        table {
+            thead {
+                tr {
+                    th { +"Symbol" }
+                    th { +"Description" }
+                    th { +"Ticket" }
+                    th { +"Priority" }
+                }
+            }
+            tbody {
+                for (item in items) {
+                    tr {
+                        td {
+                            unsafe {
+                                +"<strong>${item.name}</strong>"
                             }
                         }
+                        td { +item.description }
+                        td {
+                            if (item.ticket.isNotEmpty()) {
+                                span(classes = "ticket") { +item.ticket }
+                            }
+                        }
+                        td { +item.priority }
                     }
                 }
             }
@@ -102,7 +123,7 @@ internal class TechDebtReportGenerator {
     }
 }
 
-private const val TechDebtItemStyle = """
+private const val TECH_DEBT_ITEM_STYLE = """
     body {
         font-family: sans-serif;
         background-color: #f3f3f3;
