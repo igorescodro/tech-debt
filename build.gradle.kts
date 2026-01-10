@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     implementation(libs.kotlin.stdlib)
-    // KSP dependencies will be added here or by the user later
+    implementation(libs.ksp.api)
 }
 
 tasks.test {
