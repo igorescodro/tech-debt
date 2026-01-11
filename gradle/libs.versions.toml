@@ -1,4 +1,5 @@
 [versions]
+techdebt = "0.1.0"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.27"
 kotlinx-html = "0.11.0"

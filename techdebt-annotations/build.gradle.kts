@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.escodro.techdebt"
-version = "0.1.0"
+version = libs.versions.techdebt.get()
 
 repositories {
     mavenCentral()
