@@ -29,8 +29,6 @@ internal class TechDebtProcessor(
                 .getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!)
                 .filterIsInstance<KSDeclaration>()
 
-        if (!symbols.iterator().hasNext()) return emptyList()
-
         val items = mutableListOf<TechDebtItem>()
         val originatingFiles = mutableSetOf<KSFile>()
 
@@ -38,10 +36,10 @@ internal class TechDebtProcessor(
             symbol.containingFile?.let { originatingFiles.add(it) }
 
             val annotation =
-                symbol.annotations.first {
+                symbol.annotations.firstOrNull {
                     it.annotationType.resolve().declaration.qualifiedName?.asString() ==
                         TechDebt::class.qualifiedName
-                }
+                } ?: return@forEach
 
             val args = annotation.arguments.associate { it.name!!.asString() to it.value }
 
@@ -56,15 +54,21 @@ internal class TechDebtProcessor(
             )
         }
 
-        val file =
-            environment.codeGenerator.createNewFile(
-                Dependencies(aggregating = true, *originatingFiles.toTypedArray()),
-                "techdebt",
-                "report",
-                "html"
-            )
+        if (items.isEmpty()) return emptyList()
 
-        file.bufferedWriter().use { writer -> reportGenerator.generate(writer, items) }
+        try {
+            val file =
+                environment.codeGenerator.createNewFile(
+                    Dependencies(aggregating = true, *originatingFiles.toTypedArray()),
+                    "techdebt",
+                    "report",
+                    "html"
+                )
+
+            file.bufferedWriter().use { writer -> reportGenerator.generate(writer, items) }
+        } catch (e: Exception) {
+            environment.logger.error("Failed to generate tech debt report: ${e.message}")
+        }
 
         return emptyList()
     }
