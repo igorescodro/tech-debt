@@ -36,9 +36,4 @@ subprojects {
     ktfmt {
         kotlinLangStyle()
     }
-
-    afterEvaluate {
-        tasks.findByName("check")?.dependsOn("detekt")
-        tasks.findByName("check")?.dependsOn("ktfmtCheck")
-    }
 }
