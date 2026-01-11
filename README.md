@@ -44,8 +44,8 @@ The annotation can be applied to:
 - Functions
 - Properties
 
-### 4. Generate the report
-Build your project using Gradle:
+### 2. Generate the report
+The report is automatically generated during the build process. Simply run your Gradle build:
 
 ```bash
 ./gradlew build
