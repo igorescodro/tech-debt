@@ -8,6 +8,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 
 /**
  * Processes annotations with `@TechDebt` and generates a technical debt report.
@@ -20,6 +21,7 @@ internal class TechDebtProcessor(
 
     private val reportGenerator = TechDebtHtmlReportGenerator()
 
+    @Suppress("SpreadOperator")
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols =
             resolver
@@ -28,29 +30,30 @@ internal class TechDebtProcessor(
 
         if (!symbols.iterator().hasNext()) return emptyList()
 
-        val items =
-            symbols
-                .map { symbol ->
-                    val annotation =
-                        symbol.annotations.first { it.shortName.asString() == "TechDebt" }
+        val items = mutableListOf<TechDebtItem>()
+        val originatingFiles = mutableSetOf<KSFile>()
 
-                    val args =
-                        annotation.arguments.associate {
-                            it.name!!.asString() to it.value.toString()
-                        }
+        symbols.forEach { symbol ->
+            symbol.containingFile?.let { originatingFiles.add(it) }
 
-                    TechDebtItem(
-                        name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
-                        description = args["description"] ?: "",
-                        ticket = args["ticket"] ?: "",
-                        priority = args["priority"]?.substringAfterLast('.') ?: "NONE"
-                    )
-                }
-                .toList()
+            val annotation = symbol.annotations.first { it.shortName.asString() == "TechDebt" }
+
+            val args =
+                annotation.arguments.associate { it.name!!.asString() to it.value.toString() }
+
+            items.add(
+                TechDebtItem(
+                    name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
+                    description = args["description"] ?: "",
+                    ticket = args["ticket"] ?: "",
+                    priority = args["priority"]?.substringAfterLast('.') ?: "NONE"
+                )
+            )
+        }
 
         val file =
             environment.codeGenerator.createNewFile(
-                Dependencies(false),
+                Dependencies(aggregating = true, *originatingFiles.toTypedArray()),
                 "techdebt",
                 "report",
                 "html"
