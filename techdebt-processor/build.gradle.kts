@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.escodro.techdebt"
-version = "0.1.0"
+version = libs.versions.techdebt.get()
 
 repositories {
     mavenCentral()
@@ -41,7 +41,7 @@ publishing {
                     if (it is ProjectDependency) {
                         dependencyNode.appendNode("groupId", "com.escodro.techdebt")
                         dependencyNode.appendNode("artifactId", it.name)
-                        dependencyNode.appendNode("version", "1.0.0")
+                        dependencyNode.appendNode("version", libs.versions.techdebt.get())
                     } else {
                         dependencyNode.appendNode("groupId", it.group)
                         dependencyNode.appendNode("artifactId", it.name)
