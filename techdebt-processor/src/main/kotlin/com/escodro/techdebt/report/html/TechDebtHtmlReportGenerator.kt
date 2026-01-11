@@ -5,11 +5,13 @@ import java.io.Writer
 import kotlinx.html.BODY
 import kotlinx.html.body
 import kotlinx.html.div
+import kotlinx.html.h1
 import kotlinx.html.h2
 import kotlinx.html.head
 import kotlinx.html.html
 import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
+import kotlinx.html.strong
 import kotlinx.html.style
 import kotlinx.html.table
 import kotlinx.html.tbody
@@ -33,7 +35,7 @@ internal class TechDebtHtmlReportGenerator {
         writer.appendHTML().html {
             head { style { unsafe { +TECH_DEBT_ITEM_STYLE.trimIndent() } } }
             body {
-                unsafe { +"<h1>Tech Debt Report</h1>" }
+                h1 { +"Tech Debt Report" }
 
                 header(
                     totalItems = totalItems,
@@ -92,7 +94,7 @@ internal class TechDebtHtmlReportGenerator {
             tbody {
                 for (item in items) {
                     tr {
-                        td { unsafe { +"<strong>${item.name}</strong>" } }
+                        td { strong { +item.name } }
                         td { +item.description }
                         td {
                             if (item.ticket.isNotEmpty()) {
