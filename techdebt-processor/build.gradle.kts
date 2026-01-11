@@ -32,4 +32,28 @@ kotlin {
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
+
+    pom {
+        name.set("tech-debt processor")
+        description.set("KSP symbol processor for the tech-debt tool.")
+        url.set("https://github.com/igorescodro/tech-debt")
+        licenses {
+            license {
+                name.set("The Apache Software License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                id.set("igorescodro")
+                name.set("Igor Escodro")
+                email.set("escodro@outlook.com")
+            }
+        }
+        scm {
+            connection.set("scm:git:github.com/igorescodro/tech-debt.git")
+            developerConnection.set("scm:git:ssh://github.com/igorescodro/tech-debt.git")
+            url.set("https://github.com/igorescodro/tech-debt")
+        }
+    }
 }
