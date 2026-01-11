@@ -63,4 +63,18 @@ class TechDebtHtmlReportGeneratorTest {
         assertTrue(report.contains("<h2>1</h2><span>Low Priority</span>"))
         assertTrue(report.contains("<h2>1</h2><span>No Priority</span>"))
     }
+
+    @Test
+    fun `test if the report has the correct css classes`() {
+        val writer = StringWriter()
+        val items = listOf(TechDebtItem("Item 1", "Desc", "TICKET-1", "HIGH"))
+
+        reportGenerator.generate(writer, items)
+
+        val report = writer.toString()
+        assertTrue(report.contains("class=\"summary-container\""))
+        assertTrue(report.contains("class=\"summary-box total\""))
+        assertTrue(report.contains("class=\"summary-box high\""))
+        assertTrue(report.contains("class=\"ticket\""))
+    }
 }
