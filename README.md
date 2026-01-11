@@ -25,18 +25,20 @@ compilation process. It collects all annotated symbols and their metadata to pro
 
 ## Download
 
-Currently, TechDebt is available via `mavenLocal`. To use it in your project, ensure you have `mavenLocal()` in your
-repositories and add the following dependencies:
+TechDebt is available in the Sonatype Snapshot repository. To use it in your project, add the snapshot repository to 
+your `repositories` block and the following dependencies:
 
 ```kotlin
 repositories {
-    mavenLocal()
     mavenCentral()
+    maven {
+        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+    }
 }
 
 dependencies {
-    implementation("com.escodro.techdebt:techdebt-annotations:0.1.0")
-    ksp("com.escodro.techdebt:techdebt-processor:0.1.0")
+    implementation("io.github.igorescodro:techdebt-annotations:0.1.0-SNAPSHOT")
+    ksp("io.github.igorescodro:techdebt-processor:0.1.0-SNAPSHOT")
 }
 ```
 
