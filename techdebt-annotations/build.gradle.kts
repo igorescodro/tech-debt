@@ -33,12 +33,12 @@ mavenPublishing {
 
     pom {
         name.set("tech-debt annotations")
-        description.set("Annotations for the tech-debt KSP tool.")
+        description.set("A KSP annotation to mark code as tech debt")
         url.set("https://github.com/igorescodro/tech-debt")
         licenses {
             license {
                 name.set("The Apache Software License, Version 2.0")
-                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                url.set("https://raw.githubusercontent.com/igorescodro/tech-debt/refs/heads/main/LICENSE")
             }
         }
         developers {
