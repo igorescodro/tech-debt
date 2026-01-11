@@ -23,6 +23,23 @@ compilation process. It collects all annotated symbols and their metadata to pro
 
 <img src="assets/screenshot-report-example.png" alt="Screenshot of TechDebt report example">
 
+## Download
+
+Currently, TechDebt is available via `mavenLocal`. To use it in your project, ensure you have `mavenLocal()` in your
+repositories and add the following dependencies:
+
+```kotlin
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.escodro.techdebt:techdebt-annotations:0.1.0")
+    ksp("com.escodro.techdebt:techdebt-processor:0.1.0")
+}
+```
+
 ## How to Use
 
 ### 1. Annotate your code
