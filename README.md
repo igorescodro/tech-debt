@@ -57,8 +57,8 @@ For Android or JVM only projects:
 
 ```kotlin
 dependencies {
-    implementation("io.github.igorescodro:techdebt-annotations:0.1.0-SNAPSHOT")
-    ksp("io.github.igorescodro:techdebt-processor:0.1.0-SNAPSHOT")
+    implementation("io.github.igorescodro:techdebt-annotations:0.1.0-beta01")
+    ksp("io.github.igorescodro:techdebt-processor:0.1.0-beta01")
 }
 ```
 
