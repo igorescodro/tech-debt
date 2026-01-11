@@ -19,6 +19,10 @@ code, TechDebt allows you to:
 TechDebt uses **KSP (Kotlin Symbol Processing)** to scan your source code for the `@TechDebt` annotation during the
 compilation process. It collects all annotated symbols and their metadata to produce an HTML report.
 
+## Report example
+
+<img src="assets/screenshot-report-example.png" alt="Screenshot of TechDebt report example">
+
 ## How to Use
 
 ### 1. Annotate your code
