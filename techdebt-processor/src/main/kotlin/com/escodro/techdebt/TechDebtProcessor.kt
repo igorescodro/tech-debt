@@ -11,6 +11,7 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.validate
+import java.io.IOException
 
 /**
  * Processes annotations with `@TechDebt` and generates a technical debt report.
@@ -25,7 +26,6 @@ internal class TechDebtProcessor(
     private val allItems = mutableListOf<TechDebtItem>()
     private val allOriginatingFiles = mutableSetOf<KSFile>()
 
-    @Suppress("SpreadOperator")
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols =
             resolver
@@ -62,6 +62,7 @@ internal class TechDebtProcessor(
         return unableToProcess
     }
 
+    @Suppress("SpreadOperator", "TooGenericExceptionCaught")
     override fun finish() {
         if (allItems.isEmpty()) return
 
@@ -75,8 +76,14 @@ internal class TechDebtProcessor(
                 )
 
             file.bufferedWriter().use { writer -> reportGenerator.generate(writer, allItems) }
+        } catch (e: IOException) {
+            environment.logger.error(
+                "Failed to generate tech debt report due to I/O error: ${e.message}"
+            )
         } catch (e: Exception) {
-            environment.logger.error("Failed to generate tech debt report: ${e.message}")
+            environment.logger.error(
+                "An unexpected error occurred while generating the tech debt report: ${e.message}"
+            )
         }
     }
 }
