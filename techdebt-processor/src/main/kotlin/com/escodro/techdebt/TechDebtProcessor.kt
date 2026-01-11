@@ -21,39 +21,42 @@ internal class TechDebtProcessor(
     private val reportGenerator = TechDebtHtmlReportGenerator()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val symbols = resolver
-            .getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!)
-            .filterIsInstance<KSDeclaration>()
+        val symbols =
+            resolver
+                .getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!)
+                .filterIsInstance<KSDeclaration>()
 
         if (!symbols.iterator().hasNext()) return emptyList()
 
-        val items = symbols.map { symbol ->
-            val annotation = symbol.annotations.first {
-                it.shortName.asString() == "TechDebt"
-            }
+        val items =
+            symbols
+                .map { symbol ->
+                    val annotation =
+                        symbol.annotations.first { it.shortName.asString() == "TechDebt" }
 
-            val args = annotation.arguments.associate {
-                it.name!!.asString() to it.value.toString()
-            }
+                    val args =
+                        annotation.arguments.associate {
+                            it.name!!.asString() to it.value.toString()
+                        }
 
-            TechDebtItem(
-                name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
-                description = args["description"] ?: "",
-                ticket = args["ticket"] ?: "",
-                priority = args["priority"]?.substringAfterLast('.') ?: "NONE"
+                    TechDebtItem(
+                        name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
+                        description = args["description"] ?: "",
+                        ticket = args["ticket"] ?: "",
+                        priority = args["priority"]?.substringAfterLast('.') ?: "NONE"
+                    )
+                }
+                .toList()
+
+        val file =
+            environment.codeGenerator.createNewFile(
+                Dependencies(false),
+                "techdebt",
+                "report",
+                "html"
             )
-        }.toList()
 
-        val file = environment.codeGenerator.createNewFile(
-            Dependencies(false),
-            "techdebt",
-            "report",
-            "html"
-        )
-
-        file.bufferedWriter().use { writer ->
-            reportGenerator.generate(writer, items)
-        }
+        file.bufferedWriter().use { writer -> reportGenerator.generate(writer, items) }
 
         return emptyList()
     }

@@ -3,6 +3,7 @@ kotlin = "1.9.22"
 ksp = "1.9.22-1.0.17"
 kotlinx-html = "0.11.0"
 detekt = "1.23.4"
+ktfmt = "0.16.0"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -13,3 +14,4 @@ kotlinx-html = { group = "org.jetbrains.kotlinx", name = "kotlinx-html-jvm", ver
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }

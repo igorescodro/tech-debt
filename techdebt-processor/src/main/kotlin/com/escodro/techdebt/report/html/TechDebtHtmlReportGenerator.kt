@@ -1,6 +1,7 @@
 package com.escodro.techdebt.report.html
 
 import com.escodro.techdebt.report.TechDebtItem
+import java.io.Writer
 import kotlinx.html.BODY
 import kotlinx.html.body
 import kotlinx.html.div
@@ -17,16 +18,11 @@ import kotlinx.html.th
 import kotlinx.html.thead
 import kotlinx.html.tr
 import kotlinx.html.unsafe
-import java.io.Writer
 
-/**
- * Generates an HTML report with the tech debt items.
- */
+/** Generates an HTML report with the tech debt items. */
 internal class TechDebtHtmlReportGenerator {
 
-    /**
-     * Generates an HTML report with the tech debt items.
-     */
+    /** Generates an HTML report with the tech debt items. */
     fun generate(writer: Writer, items: List<TechDebtItem>) {
         val totalItems = items.size
         val highItems = items.count { it.priority == "HIGH" }
@@ -35,17 +31,9 @@ internal class TechDebtHtmlReportGenerator {
         val noneItems = items.count { it.priority == "NONE" }
 
         writer.appendHTML().html {
-            head {
-                style {
-                    unsafe {
-                        +TECH_DEBT_ITEM_STYLE.trimIndent()
-                    }
-                }
-            }
+            head { style { unsafe { +TECH_DEBT_ITEM_STYLE.trimIndent() } } }
             body {
-                unsafe {
-                    +"<h1>Tech Debt Report</h1>"
-                }
+                unsafe { +"<h1>Tech Debt Report</h1>" }
 
                 header(
                     totalItems = totalItems,
@@ -104,11 +92,7 @@ internal class TechDebtHtmlReportGenerator {
             tbody {
                 for (item in items) {
                     tr {
-                        td {
-                            unsafe {
-                                +"<strong>${item.name}</strong>"
-                            }
-                        }
+                        td { unsafe { +"<strong>${item.name}</strong>" } }
                         td { +item.description }
                         td {
                             if (item.ticket.isNotEmpty()) {
@@ -123,7 +107,8 @@ internal class TechDebtHtmlReportGenerator {
     }
 }
 
-private const val TECH_DEBT_ITEM_STYLE = """
+private const val TECH_DEBT_ITEM_STYLE =
+    """
     body {
         font-family: sans-serif;
         background-color: #f3f3f3;

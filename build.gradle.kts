@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.ktfmt)
 }
 
 repositories {
@@ -24,6 +25,7 @@ kotlin {
 
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "com.ncorti.ktfmt.gradle")
 
     detekt {
         buildUponDefaultConfig = true
@@ -31,7 +33,12 @@ subprojects {
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
     }
 
+    ktfmt {
+        kotlinLangStyle()
+    }
+
     afterEvaluate {
         tasks.findByName("check")?.dependsOn("detekt")
+        tasks.findByName("check")?.dependsOn("ktfmtCheck")
     }
 }

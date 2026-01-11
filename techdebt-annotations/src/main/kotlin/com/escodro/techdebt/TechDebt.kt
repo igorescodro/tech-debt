@@ -4,7 +4,7 @@ package com.escodro.techdebt
     AnnotationTarget.CLASS,
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY,
-    )
+)
 @Retention(AnnotationRetention.SOURCE)
 annotation class TechDebt(
     val ticket: String = "",
