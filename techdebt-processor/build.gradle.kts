@@ -35,12 +35,12 @@ mavenPublishing {
 
     pom {
         name.set("tech-debt processor")
-        description.set("KSP symbol processor for the tech-debt tool.")
+        description.set("A KSP processor to generate a tech debt report")
         url.set("https://github.com/igorescodro/tech-debt")
         licenses {
             license {
                 name.set("The Apache Software License, Version 2.0")
-                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                url.set("https://raw.githubusercontent.com/igorescodro/tech-debt/refs/heads/main/LICENSE")
             }
         }
         developers {
