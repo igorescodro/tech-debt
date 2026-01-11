@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.maven.publish)
 }
 
@@ -10,11 +10,20 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(libs.kotlin.stdlib)
-}
-
 kotlin {
+    jvm()
+    iosArm64()
+    iosX64()
+    iosSimulatorArm64()
+    macosArm64()
+    macosX64()
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlin.stdlib)
+        }
+    }
+
     jvmToolchain(17)
 }
 

@@ -36,6 +36,26 @@ repositories {
     }
 }
 
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("io.github.igorescodro:techdebt-annotations:0.1.0-beta01")
+        }
+    }
+}
+
+dependencies {
+    add("kspAndroid", "io.github.igorescodro:techdebt-processor:0.1.0-beta01")
+    add("kspIosSimulatorArm64", "io.github.igorescodro:techdebt-processor:0.1.0-beta01")
+    add("kspIosX64", "io.github.igorescodro:techdebt-processor:0.1.0-beta01")
+    add("kspIosArm64", "io.github.igorescodro:techdebt-processor:0.1.0-beta01")
+    // Add any other platform target you use in your project, for example kspDesktop
+}
+```
+
+For Android or JVM only projects:
+
+```kotlin
 dependencies {
     implementation("io.github.igorescodro:techdebt-annotations:0.1.0-SNAPSHOT")
     ksp("io.github.igorescodro:techdebt-processor:0.1.0-SNAPSHOT")

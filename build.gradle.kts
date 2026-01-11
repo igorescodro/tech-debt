@@ -1,26 +1,13 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.ktfmt)
 }
 
 repositories {
     mavenCentral()
-}
-
-dependencies {
-    implementation(project(":techdebt-annotations"))
-    ksp(project(":techdebt-processor"))
-    implementation(libs.kotlin.stdlib)
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(17)
 }
 
 subprojects {

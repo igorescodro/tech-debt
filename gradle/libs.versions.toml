@@ -1,5 +1,5 @@
 [versions]
-techdebt = "0.1.0-SNAPSHOT"
+techdebt = "0.1.0-beta01"
 kotlin = "2.0.21"
 kotlinx-html = "0.11.0"
 junit = "5.10.1"
@@ -22,6 +22,7 @@ kotlin-compile-testing-ksp = { group = "com.github.tschuchortdev", name = "kotli
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
