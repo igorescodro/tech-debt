@@ -4,11 +4,16 @@ ksp = "1.9.22-1.0.17"
 kotlinx-html = "0.11.0"
 detekt = "1.23.4"
 ktfmt = "0.16.0"
+junit = "5.10.1"
+kotlin-compile-testing = "1.5.0"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 ksp-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
 kotlinx-html = { group = "org.jetbrains.kotlinx", name = "kotlinx-html-jvm", version.ref = "kotlinx-html" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+kotlin-compile-testing-ksp = { group = "com.github.tschuchortdev", name = "kotlin-compile-testing-ksp", version.ref = "kotlin-compile-testing" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
