@@ -27,16 +27,16 @@ internal class TechDebtProcessor(
     private val allOriginatingFiles = mutableSetOf<KSFile>()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val symbols =
-            resolver
-                .getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!)
-                .filterIsInstance<KSDeclaration>()
-
-        val unableToProcess = symbols.filterNot { it.validate() }.toList()
-
-        symbols
-            .filter { it.validate() }
+        val unableToProcess = mutableListOf<KSAnnotated>()
+        resolver
+            .getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!)
+            .filterIsInstance<KSDeclaration>()
             .forEach { symbol ->
+                if (!symbol.validate()) {
+                    unableToProcess.add(symbol)
+                    return@forEach
+                }
+
                 symbol.containingFile?.let { allOriginatingFiles.add(it) }
 
                 val annotation =
