@@ -9,6 +9,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
+import com.google.devtools.ksp.symbol.KSType
 
 /**
  * Processes annotations with `@TechDebt` and generates a technical debt report.
@@ -36,17 +37,21 @@ internal class TechDebtProcessor(
         symbols.forEach { symbol ->
             symbol.containingFile?.let { originatingFiles.add(it) }
 
-            val annotation = symbol.annotations.first { it.shortName.asString() == "TechDebt" }
+            val annotation =
+                symbol.annotations.first {
+                    it.annotationType.resolve().declaration.qualifiedName?.asString() ==
+                        TechDebt::class.qualifiedName
+                }
 
-            val args =
-                annotation.arguments.associate { it.name!!.asString() to it.value.toString() }
+            val args = annotation.arguments.associate { it.name!!.asString() to it.value }
 
             items.add(
                 TechDebtItem(
                     name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
-                    description = args["description"] ?: "",
-                    ticket = args["ticket"] ?: "",
-                    priority = args["priority"]?.substringAfterLast('.') ?: "NONE"
+                    description = args["description"]?.toString().orEmpty(),
+                    ticket = args["ticket"]?.toString().orEmpty(),
+                    priority =
+                        (args["priority"] as? KSType)?.declaration?.simpleName?.asString() ?: "NONE"
                 )
             )
         }
