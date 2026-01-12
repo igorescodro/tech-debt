@@ -5,7 +5,7 @@
 When I use the following commands in a conversation, you will open the respective file and follow the instructions
 there:
 
-- `/research` - /.junie/recipes/rpi-research.yaml
-- `/plan` - /.junie/recipes/rpi-plan.yaml
-- `/implement` - /.junie/recipes/rpi-implement.yaml
-- `/iterate` - /.junie/recipes/rpi-iterate.yaml
+- `/research` - /.junie/commands/rpi-research.yaml
+- `/plan` - /.junie/commands/rpi-plan.yaml
+- `/implement` - /.junie/commands/rpi-implement.yaml
+- `/iterate` - /.junie/commands/rpi-iterate.yaml
