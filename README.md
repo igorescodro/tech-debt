@@ -28,15 +28,11 @@ compilation process. It collects all annotated symbols and their metadata to pro
 
 ## Download
 
-TechDebt is available in the Sonatype Snapshot repository. To use it in your project, add the snapshot repository to 
-your `repositories` block and the following dependencies:
+TechDebt is available in Maven Central. To use it in your project, add the following dependencies:
 
 ```kotlin
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
-    }
 }
 
 kotlin {
@@ -72,8 +68,8 @@ Use the `@TechDebt` annotation to mark areas of technical debt:
 
 ```kotlin
 @TechDebt(
-    ticket = "JIRA-123",
     description = "Quick fix to handle edge case, needs proper refactoring.",
+    ticket = "JIRA-123",
     priority = Priority.HIGH
 )
 fun complexMethod() {
