@@ -1,5 +1,8 @@
 # 💸 TechDebt
 
+[![Build status](https://github.com/igorescodro/tech-debt/actions/workflows/build.yml/badge.svg)](https://github.com/igorescodro/tech-debt/actions/workflows/build.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.igorescodro/techdebt-annotations.svg)](https://central.sonatype.com/search?q=g:io.github.igorescodro+techdebt)
+
 TechDebt is a Kotlin Symbol Processing (KSP) tool designed to help developers track and visualize technical debt
 directly within their codebase. By using the `@TechDebt` annotation, you can document technical debt, link it to
 tickets, and assign priority levels. The tool then generates a comprehensive HTML report summarizing all marked
