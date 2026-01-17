@@ -31,7 +31,7 @@ kotlin {
 }
 
 mavenPublishing {
-    publishToMavenCentral()
+    publishToMavenCentral(automaticRelease = true)
     if (!project.hasProperty("skip.signing")) {
         signAllPublications()
     }
