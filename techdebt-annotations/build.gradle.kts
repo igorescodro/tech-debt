@@ -29,7 +29,9 @@ kotlin {
 
 mavenPublishing {
     publishToMavenCentral()
-    signAllPublications()
+    if (!project.hasProperty("skip.signing")) {
+        signAllPublications()
+    }
 
     pom {
         name.set("tech-debt annotations")

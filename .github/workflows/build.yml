@@ -27,3 +27,22 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build detekt ktfmtCheck
+
+    - name: Publish to Maven Local
+      run: ./gradlew publishToMavenLocal -Pskip.signing
+
+    - name: Verify Artifacts
+      run: |
+        GROUP_PATH="io/github/igorescodro"
+        VERSION=$(grep "techdebt =" gradle/libs.versions.toml | cut -d'"' -f2)
+        REPO_PATH="$HOME/.m2/repository/$GROUP_PATH"
+        
+        echo "Checking for artifacts in $REPO_PATH (Version: $VERSION)"
+        
+        # Check annotations
+        ls $REPO_PATH/techdebt-annotations/$VERSION/techdebt-annotations-$VERSION.jar
+        ls $REPO_PATH/techdebt-annotations/$VERSION/techdebt-annotations-$VERSION.pom
+        
+        # Check processor
+        ls $REPO_PATH/techdebt-processor/$VERSION/techdebt-processor-$VERSION.jar
+        ls $REPO_PATH/techdebt-processor/$VERSION/techdebt-processor-$VERSION.pom
