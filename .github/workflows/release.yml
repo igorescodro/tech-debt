@@ -103,9 +103,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.next_version.outputs.next_version }}
-          name: Release ${{ steps.next_version.outputs.next_version }}
+          name: ${{ steps.next_version.outputs.next_version }}
           generate_release_notes: true
-          prerelease: ${{ contains(steps.next_version.outputs.next_version, 'beta') }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
