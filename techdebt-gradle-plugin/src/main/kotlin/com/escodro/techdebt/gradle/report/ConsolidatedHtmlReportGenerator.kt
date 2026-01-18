@@ -34,7 +34,6 @@ internal class ConsolidatedHtmlReportGenerator {
      */
     fun generate(writer: Writer, items: List<TechDebtItem>) {
         val totalItems = items.size
-        val moduleCount = items.map { it.moduleName }.distinct().size
         val highItems = items.count { it.priority == "HIGH" }
         val mediumItems = items.count { it.priority == "MEDIUM" }
         val lowItems = items.count { it.priority == "LOW" }
@@ -43,11 +42,10 @@ internal class ConsolidatedHtmlReportGenerator {
         writer.appendHTML().html {
             head { style { unsafe { +CONSOLIDATED_REPORT_STYLE.trimIndent() } } }
             body {
-                h1 { +"Consolidated Tech Debt Report" }
+                h1 { +"Tech Debt Report" }
 
                 header(
                     totalItems = totalItems,
-                    moduleCount = moduleCount,
                     highItems = highItems,
                     mediumItems = mediumItems,
                     lowItems = lowItems,
@@ -61,7 +59,6 @@ internal class ConsolidatedHtmlReportGenerator {
 
     private fun BODY.header(
         totalItems: Int,
-        moduleCount: Int,
         highItems: Int,
         mediumItems: Int,
         lowItems: Int,
@@ -71,10 +68,6 @@ internal class ConsolidatedHtmlReportGenerator {
             div(classes = "summary-box total") {
                 h2 { +totalItems.toString() }
                 span { +"Total Items" }
-            }
-            div(classes = "summary-box modules") {
-                h2 { +moduleCount.toString() }
-                span { +"Modules" }
             }
             div(classes = "summary-box high") {
                 h2 { +highItems.toString() }
@@ -161,7 +154,6 @@ private const val CONSOLIDATED_REPORT_STYLE =
         letter-spacing: 1px;
     }
     .total { background-color: #4A90E2; }
-    .modules { background-color: #8E44AD; }
     .high { background-color: #E35D5D; }
     .medium { background-color: #F5A623; }
     .low { background-color: #4CAF50; }

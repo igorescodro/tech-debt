@@ -25,10 +25,8 @@ internal class ConsolidatedHtmlReportGeneratorTest {
 
         // Summary checks
         assertTrue(html.contains("Total Items"), "Should contain Total Items")
-        assertTrue(html.contains("Modules"), "Should contain Modules")
         assertTrue(html.contains("High Priority"), "Should contain High Priority")
         assertTrue(html.contains("5"), "Should contain total count 5")
-        assertTrue(html.contains("3"), "Should contain module count 3")
         assertTrue(html.contains("2"), "Should contain high priority count 2")
     }
 
