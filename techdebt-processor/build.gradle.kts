@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.maven.publish)
-    `java-gradle-plugin`
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "io.github.igorescodro"
@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":techdebt-annotations"))
     implementation(libs.ksp.api)
     implementation(libs.kotlinx.html)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
