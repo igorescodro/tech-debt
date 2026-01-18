@@ -72,7 +72,7 @@ internal class TechDebtPluginTest {
         assertTrue(reportFile.exists(), "Consolidated report should exist")
 
         val content = reportFile.readText()
-        assertTrue(content.contains("Consolidated Tech Debt Report"))
+        assertTrue(content.contains("Tech Debt Report"))
         assertTrue(content.contains(":app"))
         assertTrue(content.contains("com.example.MyClass"))
         assertTrue(content.contains("Test debt"))

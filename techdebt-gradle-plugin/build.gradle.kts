@@ -50,7 +50,7 @@ mavenPublishing {
 
     pom {
         name.set("tech-debt gradle plugin")
-        description.set("A Gradle plugin to generate consolidated tech debt reports")
+        description.set("A Gradle plugin to generate tech debt reports")
         url.set("https://github.com/igorescodro/tech-debt")
         licenses {
             license {
