@@ -28,5 +28,5 @@ dependencies {
 }
 
 techDebtReport {
-    outputFile.set(layout.buildDirectory.file("custom/path/tech_debt_report.html"))
+    outputFile.set(layout.projectDirectory.file("assets/report.html"))
 }

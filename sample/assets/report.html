@@ -1,0 +1,145 @@
+<html>
+  <head>
+    <style>body {
+    font-family: sans-serif;
+    background-color: #f3f3f3;
+    margin: 0;
+    padding: 20px;
+}
+h1 {
+    color: #333;
+}
+.summary-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+.summary-box {
+    flex: 1;
+    min-width: 120px;
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.summary-box h2 {
+    margin: 0;
+    font-size: 32px;
+}
+.summary-box span {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.total { background-color: #4A90E2; }
+.high { background-color: #E35D5D; }
+.medium { background-color: #F5A623; }
+.low { background-color: #4CAF50; }
+.none { background-color: #9E9E9E; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 14px;
+}
+tr:hover {
+    background-color: #f5f5f5;
+}
+.ticket {
+    font-family: monospace;
+    background-color: #eee;
+    padding: 2px 4px;
+    border-radius: 4px;
+}</style>
+  </head>
+  <body>
+    <h1>Tech Debt Report</h1>
+    <div class="summary-container">
+      <div class="summary-box total">
+        <h2>5</h2>
+<span>Total Items</span></div>
+      <div class="summary-box high">
+        <h2>2</h2>
+<span>High Priority</span></div>
+      <div class="summary-box medium">
+        <h2>1</h2>
+<span>Medium Priority</span></div>
+      <div class="summary-box low">
+        <h2>1</h2>
+<span>Low Priority</span></div>
+      <div class="summary-box none">
+        <h2>1</h2>
+<span>No Priority</span></div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Symbol</th>
+          <th>Description</th>
+          <th>Ticket</th>
+          <th>Priority</th>
+          <th>Source Set</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>:sample</td>
+          <td><strong>Sample.kt</strong></td>
+          <td>Too many functions</td>
+          <td></td>
+          <td>HIGH</td>
+          <td>jvm</td>
+        </tr>
+        <tr>
+          <td>:sample</td>
+          <td><strong>com.escodro.sample.Sample.someComplexFunction</strong></td>
+          <td>This function is too complex</td>
+          <td><span class="ticket">TD-3</span></td>
+          <td>HIGH</td>
+          <td>jvm</td>
+        </tr>
+        <tr>
+          <td>:sample</td>
+          <td><strong>com.escodro.sample.Sample.someProperty</strong></td>
+          <td>This property should be private</td>
+          <td><span class="ticket">TD-2</span></td>
+          <td>MEDIUM</td>
+          <td>jvm</td>
+        </tr>
+        <tr>
+          <td>:sample</td>
+          <td><strong>com.escodro.sample.Sample</strong></td>
+          <td>This class needs a better name</td>
+          <td><span class="ticket">TD-1</span></td>
+          <td>LOW</td>
+          <td>jvm</td>
+        </tr>
+        <tr>
+          <td>:sample</td>
+          <td><strong>com.escodro.sample.Sample.legacyFunction</strong></td>
+          <td>Legacy code, handle with care</td>
+          <td></td>
+          <td>NONE</td>
+          <td>jvm</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
