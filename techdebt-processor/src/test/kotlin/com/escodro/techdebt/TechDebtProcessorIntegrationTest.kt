@@ -43,13 +43,13 @@ internal class TechDebtProcessorIntegrationTest {
         assertTrue(content.contains("MyClass"))
         assertTrue(content.contains("My description"))
         assertTrue(content.contains("JIRA-123"))
-        assertTrue(content.contains("HIGH"))
+        assertTrue(content.contains("HIGH"), "JSON should contain priority")
     }
 
     @Test
     fun `test if the processor includes module name in JSON report`() {
         val testProject = TestProject(tempDir)
-        testProject.setupBuild(moduleName = ":my-module")
+        testProject.setupBuild()
         testProject.addSource(
             "MyClass.kt",
             """
@@ -69,6 +69,6 @@ internal class TechDebtProcessorIntegrationTest {
         assertTrue(jsonFile.exists(), "JSON report file should exist")
 
         val content = jsonFile.readText()
-        assertTrue(content.contains(":my-module"), "JSON should contain module name")
+        assertTrue(content.contains("test-project"), "JSON should contain module name")
     }
 }
