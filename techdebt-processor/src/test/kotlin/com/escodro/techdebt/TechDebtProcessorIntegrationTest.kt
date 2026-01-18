@@ -103,6 +103,31 @@ internal class TechDebtProcessorIntegrationTest {
     }
 
     @Test
+    fun `test if the processor handles file annotation`() {
+        val testProject = TestProject(tempDir)
+        testProject.setupBuild()
+        testProject.addSource(
+            "AnnotatedFile.kt",
+            """
+            @file:TechDebt(description = "File debt")
+            package com.escodro.techdebt
+            
+            import com.escodro.techdebt.TechDebt
+            
+            class AnnotatedFile
+            """
+                .trimIndent()
+        )
+
+        testProject.build()
+
+        val jsonFile = testProject.getJsonReportFile()
+        val content = jsonFile.readText()
+        assertTrue(content.contains("File debt"))
+        assertTrue(content.contains("AnnotatedFile.kt"))
+    }
+
+    @Test
     fun `test if the processor handles missing module name`() {
         val testProject = TestProject(tempDir)
         // Manual setup without moduleName arg

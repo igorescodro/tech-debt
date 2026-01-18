@@ -12,7 +12,7 @@ technical debt.
 
 The primary goal of TechDebt is to make technical debt visible and manageable. Instead of letting TODOs get lost in the
 code, TechDebt allows you to:
-- Formally document technical debt at the class, function, or property level.
+- Formally document technical debt at the file, class, function, or property level.
 - Categorize debt by priority (Low, Medium, High).
 - Link code smells or shortcuts to issue tracker tickets.
 - Generate a visual report to share with the team or stakeholders.
@@ -92,6 +92,7 @@ fun complexMethod() {
 ```
 
 The annotation can be applied to:
+- Files
 - Classes
 - Functions
 - Properties
