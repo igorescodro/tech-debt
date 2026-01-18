@@ -37,20 +37,15 @@ class TechDebtPlugin : Plugin<Project> {
             )
         }
 
-        // Set up task dependencies after project evaluation
-        project.afterEvaluate {
-            project.allprojects.forEach { subproject ->
-                subproject.tasks.matching { it.name.startsWith("ksp") }.forEach { kspTask ->
-                    reportTask.configure { it.dependsOn(kspTask) }
-                }
-            }
-        }
-
-        // Auto-configure moduleName for all subprojects with KSP
-        project.allprojects { subproject ->
+        // Set up task dependencies and auto-configure moduleName for all subprojects with KSP
+        project.allprojects.forEach { subproject ->
             subproject.pluginManager.withPlugin("com.google.devtools.ksp") {
                 val kspExtension = subproject.extensions.getByType(KspExtension::class.java)
                 kspExtension.arg("moduleName", subproject.path)
+
+                reportTask.configure { task ->
+                    task.dependsOn(subproject.tasks.matching { it.name.startsWith("ksp") })
+                }
             }
         }
     }
