@@ -38,7 +38,8 @@ internal class ConsolidatedHtmlReportGeneratorTest {
                 name = "MyClass",
                 description = "Fix this later",
                 ticket = "PROJ-456",
-                priority = "HIGH"
+                priority = "HIGH",
+                sourceSet = "main"
             )
         )
 
@@ -58,6 +59,7 @@ internal class ConsolidatedHtmlReportGeneratorTest {
         name = "name",
         description = "description",
         ticket = "ticket",
-        priority = priority
+        priority = priority,
+        sourceSet = "main"
     )
 }

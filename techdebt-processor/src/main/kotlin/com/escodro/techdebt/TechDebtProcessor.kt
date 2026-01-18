@@ -25,6 +25,7 @@ internal class TechDebtProcessor(
 
     private val jsonReportGenerator = TechDebtJsonReportGenerator()
     private val moduleName = environment.options["moduleName"] ?: "unknown"
+    private val sourceSet = environment.options["sourceSet"] ?: "unknown"
     private val allItems = mutableListOf<TechDebtItem>()
     private val allOriginatingFiles = mutableSetOf<KSFile>()
 
@@ -62,7 +63,8 @@ internal class TechDebtProcessor(
                         name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
                         description = args["description"]?.toString().orEmpty(),
                         ticket = args["ticket"]?.toString().orEmpty(),
-                        priority = priority
+                        priority = priority,
+                        sourceSet = sourceSet
                     )
                 )
             }

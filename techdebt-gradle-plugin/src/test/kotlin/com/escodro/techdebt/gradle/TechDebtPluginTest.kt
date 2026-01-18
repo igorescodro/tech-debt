@@ -54,7 +54,8 @@ internal class TechDebtPluginTest {
                     "name": "com.example.MyClass",
                     "description": "Test debt",
                     "ticket": "JIRA-123",
-                    "priority": "HIGH"
+                    "priority": "HIGH",
+                    "sourceSet": "main"
                 }
             ]
             """.trimIndent()
@@ -95,7 +96,8 @@ internal class TechDebtPluginTest {
                     "name": "Module1Class",
                     "description": "Module 1 debt",
                     "ticket": "JIRA-001",
-                    "priority": "HIGH"
+                    "priority": "HIGH",
+                    "sourceSet": "main"
                 }
             ]
             """.trimIndent()
@@ -111,7 +113,8 @@ internal class TechDebtPluginTest {
                     "name": "Module2Class",
                     "description": "Module 2 debt",
                     "ticket": "JIRA-002",
-                    "priority": "LOW"
+                    "priority": "LOW",
+                    "sourceSet": "main"
                 }
             ]
             """.trimIndent()
@@ -164,21 +167,24 @@ internal class TechDebtPluginTest {
                     "name": "BClass",
                     "description": "B debt",
                     "ticket": "",
-                    "priority": "LOW"
+                    "priority": "LOW",
+                    "sourceSet": "main"
                 },
                 {
                     "moduleName": ":a-module",
                     "name": "AClassLow",
                     "description": "A low debt",
                     "ticket": "",
-                    "priority": "LOW"
+                    "priority": "LOW",
+                    "sourceSet": "main"
                 },
                 {
                     "moduleName": ":a-module",
                     "name": "AClassHigh",
                     "description": "A high debt",
                     "ticket": "",
-                    "priority": "HIGH"
+                    "priority": "HIGH",
+                    "sourceSet": "main"
                 }
             ]
             """.trimIndent()
@@ -227,6 +233,86 @@ internal class TechDebtPluginTest {
 
         val reportFile = File(tempDir, "build/custom/report.html")
         assertTrue(reportFile.exists(), "Custom report file should exist at ${reportFile.absolutePath}")
+    }
+
+    @Test
+    fun `test multiplatform aggregation`() {
+        setupProject()
+
+        // commonMain
+        val commonMainDir = File(tempDir, "build/generated/ksp/commonMain/resources/techdebt")
+        commonMainDir.mkdirs()
+        File(commonMainDir, "report.json").writeText(
+            """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "SharedClass",
+                    "description": "Shared debt",
+                    "ticket": "JIRA-123",
+                    "priority": "HIGH",
+                    "sourceSet": "unknown"
+                }
+            ]
+            """.trimIndent()
+        )
+
+        // iosArm64
+        val iosDir = File(tempDir, "build/generated/ksp/iosArm64/resources/techdebt")
+        iosDir.mkdirs()
+        File(iosDir, "report.json").writeText(
+            """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "SharedClass",
+                    "description": "Shared debt",
+                    "ticket": "JIRA-123",
+                    "priority": "HIGH",
+                    "sourceSet": "unknown"
+                }
+            ]
+            """.trimIndent()
+        )
+
+        // Only iOS debt
+        val iosOnlyDir = File(tempDir, "build/generated/ksp/iosX64/resources/techdebt")
+        iosOnlyDir.mkdirs()
+        File(iosOnlyDir, "report.json").writeText(
+            """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "IosOnlyClass",
+                    "description": "iOS debt",
+                    "ticket": "JIRA-iOS",
+                    "priority": "MEDIUM",
+                    "sourceSet": "unknown"
+                }
+            ]
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(tempDir)
+            .withArguments("generateTechDebtReport")
+            .withPluginClasspath()
+            .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        val content = reportFile.readText()
+
+        // SharedClass should only appear once and show "commonMain, iosArm64"
+        assertTrue(content.contains("SharedClass"))
+        val sharedCount = "SharedClass".toRegex().findAll(content).count()
+        assertEquals(1, sharedCount, "SharedClass should only appear once")
+        assertTrue(content.contains("commonMain, iosArm64"), "Should show both source sets for shared debt")
+
+        // IosOnlyClass should show iosX64
+        assertTrue(content.contains("IosOnlyClass"))
+        assertTrue(content.contains("iosX64"), "Should show iosX64 for ios only debt")
     }
 
     private fun setupProject() {
