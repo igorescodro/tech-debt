@@ -11,6 +11,7 @@ package com.escodro.techdebt
     AnnotationTarget.CLASS,
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY,
+    AnnotationTarget.FILE,
 )
 @Retention(AnnotationRetention.SOURCE)
 annotation class TechDebt(

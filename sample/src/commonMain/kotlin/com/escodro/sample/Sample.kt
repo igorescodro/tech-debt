@@ -1,3 +1,5 @@
+@file:TechDebt(description = "Too many functions", priority = Priority.HIGH)
+
 package com.escodro.sample
 
 import com.escodro.techdebt.Priority

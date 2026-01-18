@@ -31,43 +31,49 @@ internal class TechDebtProcessor(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val unableToProcess = mutableListOf<KSAnnotated>()
-        resolver
-            .getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!)
-            .filterIsInstance<KSDeclaration>()
-            .forEach { symbol ->
-                if (!symbol.validate()) {
-                    unableToProcess.add(symbol)
-                    return@forEach
+        resolver.getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!).forEach { symbol ->
+            if (!symbol.validate()) {
+                unableToProcess.add(symbol)
+                return@forEach
+            }
+
+            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
+            ksFile?.let { allOriginatingFiles.add(it) }
+
+            val annotation =
+                symbol.annotations.firstOrNull {
+                    it.annotationType.resolve().declaration.qualifiedName?.asString() ==
+                        TechDebt::class.qualifiedName
+                } ?: return@forEach
+
+            val args = annotation.arguments.associate { it.name!!.asString() to it.value }
+
+            val priority =
+                when (val value = args["priority"]) {
+                    is KSType -> value.declaration.simpleName.asString()
+                    is KSClassDeclaration -> value.simpleName.asString()
+                    else -> "NONE"
                 }
 
-                symbol.containingFile?.let { allOriginatingFiles.add(it) }
+            val name =
+                when (symbol) {
+                    is KSDeclaration ->
+                        symbol.qualifiedName?.asString() ?: symbol.simpleName.asString()
+                    is KSFile -> symbol.fileName
+                    else -> "unknown"
+                }
 
-                val annotation =
-                    symbol.annotations.firstOrNull {
-                        it.annotationType.resolve().declaration.qualifiedName?.asString() ==
-                            TechDebt::class.qualifiedName
-                    } ?: return@forEach
-
-                val args = annotation.arguments.associate { it.name!!.asString() to it.value }
-
-                val priority =
-                    when (val value = args["priority"]) {
-                        is KSType -> value.declaration.simpleName.asString()
-                        is KSClassDeclaration -> value.simpleName.asString()
-                        else -> "NONE"
-                    }
-
-                allItems.add(
-                    TechDebtItem(
-                        moduleName = moduleName,
-                        name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
-                        description = args["description"]?.toString().orEmpty(),
-                        ticket = args["ticket"]?.toString().orEmpty(),
-                        priority = priority,
-                        sourceSet = sourceSet
-                    )
+            allItems.add(
+                TechDebtItem(
+                    moduleName = moduleName,
+                    name = name,
+                    description = args["description"]?.toString().orEmpty(),
+                    ticket = args["ticket"]?.toString().orEmpty(),
+                    priority = priority,
+                    sourceSet = sourceSet
                 )
-            }
+            )
+        }
 
         return unableToProcess
     }
