@@ -25,6 +25,7 @@ internal class TechDebtItemTest {
         name = "name",
         description = "description",
         ticket = "ticket",
-        priority = priority
+        priority = priority,
+        sourceSet = "main"
     )
 }

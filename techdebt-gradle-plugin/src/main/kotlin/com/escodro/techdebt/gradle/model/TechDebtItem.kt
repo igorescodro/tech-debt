@@ -17,7 +17,8 @@ data class TechDebtItem(
     val name: String,
     val description: String,
     val ticket: String,
-    val priority: String
+    val priority: String,
+    val sourceSet: String
 ) {
     /**
      * Returns the priority order for the tech debt item.

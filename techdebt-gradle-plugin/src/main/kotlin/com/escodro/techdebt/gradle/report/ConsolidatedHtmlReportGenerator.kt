@@ -97,6 +97,7 @@ internal class ConsolidatedHtmlReportGenerator {
                     th { +"Description" }
                     th { +"Ticket" }
                     th { +"Priority" }
+                    th { +"Source Set" }
                 }
             }
             tbody {
@@ -111,6 +112,7 @@ internal class ConsolidatedHtmlReportGenerator {
                             }
                         }
                         td { +item.priority }
+                        td { +item.sourceSet }
                     }
                 }
             }

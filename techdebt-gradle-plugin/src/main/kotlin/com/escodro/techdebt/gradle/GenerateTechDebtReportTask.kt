@@ -29,28 +29,63 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
-        val allItems = mutableListOf<TechDebtItem>()
+        val allItems = parseJsonFiles()
+        val aggregatedItems = aggregateItems(allItems)
 
-        jsonFiles.files.forEach { file ->
-            if (file.exists()) {
-                val items = Json.decodeFromString<List<TechDebtItem>>(file.readText())
-                allItems.addAll(items)
-            }
-        }
-
-        // Sort by module, then by priority
-        val sortedItems = allItems.sortedWith(
+        val sortedItems = aggregatedItems.sortedWith(
             compareBy(
                 { it.moduleName },
                 { it.priorityOrder }
             )
         )
 
+        writeReport(sortedItems)
+    }
+
+    private fun parseJsonFiles(): List<TechDebtItem> {
+        val allItems = mutableListOf<TechDebtItem>()
+        jsonFiles.files.forEach { file ->
+            if (file.exists()) {
+                val items = Json.decodeFromString<List<TechDebtItem>>(file.readText())
+                val updatedItems = if (items.any { it.sourceSet == "unknown" }) {
+                    val sourceSet = resolveSourceSet(file.absolutePath)
+                    items.map { it.copy(sourceSet = sourceSet) }
+                } else {
+                    items
+                }
+                allItems.addAll(updatedItems)
+            }
+        }
+        return allItems
+    }
+
+    private fun resolveSourceSet(path: String): String {
+        val parts = path.split("/")
+        val kspIndex = parts.indexOf("ksp")
+        return if (kspIndex != -1 && kspIndex + 1 < parts.size) {
+            parts[kspIndex + 1]
+        } else {
+            "unknown"
+        }
+    }
+
+    private fun aggregateItems(items: List<TechDebtItem>): List<TechDebtItem> =
+        items.groupBy {
+            // Group by all fields except sourceSet
+            listOf(it.moduleName, it.name, it.description, it.ticket, it.priority)
+        }.map { (_, group) ->
+            val first = group.first()
+            val sourceSets = group.map { it.sourceSet }.toSet()
+            val consolidatedSourceSet = sourceSets.sorted().joinToString(", ")
+            first.copy(sourceSet = consolidatedSourceSet)
+        }
+
+    private fun writeReport(items: List<TechDebtItem>) {
         val outputFile = outputFile.get().asFile
         outputFile.parentFile.mkdirs()
 
         outputFile.bufferedWriter().use { writer ->
-            ConsolidatedHtmlReportGenerator().generate(writer, sortedItems)
+            ConsolidatedHtmlReportGenerator().generate(writer, items)
         }
 
         logger.lifecycle("Tech Debt Report generated: file://${outputFile.absolutePath}")
