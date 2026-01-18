@@ -1,7 +1,7 @@
 package com.escodro.techdebt
 
 import com.escodro.techdebt.report.TechDebtItem
-import com.escodro.techdebt.report.html.TechDebtHtmlReportGenerator
+import com.escodro.techdebt.report.json.TechDebtJsonReportGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
@@ -22,7 +22,8 @@ internal class TechDebtProcessor(
     private val environment: SymbolProcessorEnvironment,
 ) : SymbolProcessor {
 
-    private val reportGenerator = TechDebtHtmlReportGenerator()
+    private val jsonReportGenerator = TechDebtJsonReportGenerator()
+    private val moduleName = environment.options["moduleName"] ?: "unknown"
     private val allItems = mutableListOf<TechDebtItem>()
     private val allOriginatingFiles = mutableSetOf<KSFile>()
 
@@ -49,6 +50,7 @@ internal class TechDebtProcessor(
 
                 allItems.add(
                     TechDebtItem(
+                        moduleName = moduleName,
                         name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
                         description = args["description"]?.toString().orEmpty(),
                         ticket = args["ticket"]?.toString().orEmpty(),
@@ -67,15 +69,14 @@ internal class TechDebtProcessor(
         if (allItems.isEmpty()) return
 
         try {
-            val file =
-                environment.codeGenerator.createNewFile(
-                    Dependencies(aggregating = true, *allOriginatingFiles.toTypedArray()),
-                    "techdebt",
-                    "report",
-                    "html"
-                )
+            val dependencies = Dependencies(aggregating = true, *allOriginatingFiles.toTypedArray())
 
-            file.bufferedWriter().use { writer -> reportGenerator.generate(writer, allItems) }
+            // Generate JSON report
+            val jsonFile =
+                environment.codeGenerator.createNewFile(dependencies, "techdebt", "report", "json")
+            jsonFile.bufferedWriter().use { writer ->
+                jsonReportGenerator.generate(writer, allItems)
+            }
         } catch (e: IOException) {
             environment.logger.error(
                 "Failed to generate tech debt report due to I/O error: ${e.message}"

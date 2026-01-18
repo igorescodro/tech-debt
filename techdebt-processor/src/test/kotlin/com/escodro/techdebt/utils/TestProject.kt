@@ -25,7 +25,11 @@ class TestProject(private val projectDir: File) {
         )
     }
 
-    fun setupBuild(kotlinVersion: String = "2.0.21", kspVersion: String = "2.0.21-1.0.27") {
+    fun setupBuild(
+        kotlinVersion: String = "2.0.21",
+        kspVersion: String = "2.0.21-1.0.27",
+        moduleName: String = ":test-project"
+    ) {
         val classpath =
             System.getProperty("java.class.path").split(File.pathSeparator).map { File(it) }
 
@@ -44,6 +48,10 @@ class TestProject(private val projectDir: File) {
                 implementation("io.github.igorescodro:techdebt-annotations:0.1.0-beta01")
                 ksp(files(${classpath.joinToString { "\"$it\"" }}))
             }
+            
+            ksp {
+                arg("moduleName", "$moduleName")
+            }
             """
                 .trimIndent()
         )
@@ -59,12 +67,11 @@ class TestProject(private val projectDir: File) {
         return GradleRunner.create()
             .withProjectDir(projectDir)
             .withArguments("kspKotlin", "--stacktrace")
-            .withPluginClasspath()
             .forwardOutput()
             .build()
     }
 
-    fun getReportFile(): File {
-        return File(projectDir, "build/generated/ksp/main/resources/techdebt/report.html")
+    fun getJsonReportFile(): File {
+        return File(projectDir, "build/generated/ksp/main/resources/techdebt/report.json")
     }
 }
