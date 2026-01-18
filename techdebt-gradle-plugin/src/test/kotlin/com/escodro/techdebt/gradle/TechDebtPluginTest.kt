@@ -205,6 +205,30 @@ internal class TechDebtPluginTest {
         assertTrue(aModuleLowIndex < bModuleIndex, ":a-module should come before :b-module")
     }
 
+    @Test
+    fun `test custom output file`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts").writeText(
+            """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            techDebtReport {
+                outputFile.set(layout.buildDirectory.file("custom/report.html"))
+            }
+            """.trimIndent()
+        )
+
+        GradleRunner.create()
+            .withProjectDir(tempDir)
+            .withArguments("generateTechDebtReport")
+            .withPluginClasspath()
+            .build()
+
+        val reportFile = File(tempDir, "build/custom/report.html")
+        assertTrue(reportFile.exists(), "Custom report file should exist at ${reportFile.absolutePath}")
+    }
+
     private fun setupProject() {
         File(tempDir, "settings.gradle.kts").writeText(
             """

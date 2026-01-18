@@ -42,7 +42,7 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         val sortedItems = allItems.sortedWith(
             compareBy(
                 { it.moduleName },
-                { priorityOrder(it.priority) }
+                { it.priorityOrder }
             )
         )
 
@@ -54,12 +54,5 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         }
 
         logger.lifecycle("Tech Debt Report generated: file://${outputFile.absolutePath}")
-    }
-
-    private fun priorityOrder(priority: String): Int = when (priority) {
-        "HIGH" -> 0
-        "MEDIUM" -> 1
-        "LOW" -> 2
-        else -> 3
     }
 }
