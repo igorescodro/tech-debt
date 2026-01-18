@@ -1,7 +1,6 @@
 # 💸 TechDebt
 
 [![Build status](https://github.com/igorescodro/tech-debt/actions/workflows/build.yml/badge.svg)](https://github.com/igorescodro/tech-debt/actions/workflows/build.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.igorescodro/techdebt-annotations.svg)](https://central.sonatype.com/search?q=g:io.github.igorescodro+techdebt)
 
 TechDebt is a Kotlin Symbol Processing (KSP) tool designed to help developers track and visualize technical debt
 directly within their codebase. By using the `@TechDebt` annotation, you can document technical debt, link it to
@@ -27,10 +26,14 @@ compilation process. Each module generates its own local report, which is then c
 
 <img src="assets/screenshot-report-example.png" alt="Screenshot of TechDebt report example">
 
+### 🧾 [Link to example](https://htmlpreview.github.io/https://github.com/igorescodro/tech-debt/blob/main/sample/assets/report.html)
+
 ## Download
 
 TechDebt is available in Maven Central. To use it in your project, you need to apply the Gradle plugin and add the
 following dependencies.
+
+#### Latest version: [![Maven Central](https://img.shields.io/maven-central/v/io.github.igorescodro/techdebt-annotations.svg)](https://central.sonatype.com/search?q=g:io.github.igorescodro+techdebt)
 
 ### 1. Apply the Gradle Plugin
 
