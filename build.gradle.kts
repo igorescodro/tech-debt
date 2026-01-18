@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.maven.publish) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.ktfmt)
+    id("lifecycle-base")
 }
 
 repositories {
@@ -24,4 +25,8 @@ subprojects {
     ktfmt {
         kotlinLangStyle()
     }
+}
+
+tasks.named("check") {
+    dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":check"))
 }
