@@ -26,9 +26,8 @@ class TestProject(private val projectDir: File) {
     }
 
     fun setupBuild(
-        kotlinVersion: String = "2.0.21",
-        kspVersion: String = "2.0.21-1.0.27",
-        moduleName: String = ":test-project"
+        kotlinVersion: String = "2.3.0",
+        kspVersion: String = "2.3.4",
     ) {
         val classpath =
             System.getProperty("java.class.path").split(File.pathSeparator).map { File(it) }
@@ -48,9 +47,9 @@ class TestProject(private val projectDir: File) {
                 implementation("io.github.igorescodro:techdebt-annotations:0.1.0-beta01")
                 ksp(files(${classpath.joinToString { "\"$it\"" }}))
             }
-            
+
             ksp {
-                arg("moduleName", "$moduleName")
+                arg("moduleName", "test-project")
             }
             """
                 .trimIndent()

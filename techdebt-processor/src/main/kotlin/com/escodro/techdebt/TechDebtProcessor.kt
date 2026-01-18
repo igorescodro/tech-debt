@@ -7,6 +7,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSType
@@ -48,15 +49,20 @@ internal class TechDebtProcessor(
 
                 val args = annotation.arguments.associate { it.name!!.asString() to it.value }
 
+                val priority =
+                    when (val value = args["priority"]) {
+                        is KSType -> value.declaration.simpleName.asString()
+                        is KSClassDeclaration -> value.simpleName.asString()
+                        else -> "NONE"
+                    }
+
                 allItems.add(
                     TechDebtItem(
                         moduleName = moduleName,
                         name = symbol.qualifiedName?.asString() ?: symbol.simpleName.asString(),
                         description = args["description"]?.toString().orEmpty(),
                         ticket = args["ticket"]?.toString().orEmpty(),
-                        priority =
-                            (args["priority"] as? KSType)?.declaration?.simpleName?.asString()
-                                ?: "NONE"
+                        priority = priority
                     )
                 )
             }

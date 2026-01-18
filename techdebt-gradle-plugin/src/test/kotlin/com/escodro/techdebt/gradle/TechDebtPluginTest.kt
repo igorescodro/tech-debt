@@ -32,7 +32,7 @@ internal class TechDebtPluginTest {
 
         val result = GradleRunner.create()
             .withProjectDir(tempDir)
-            .withArguments("tasks", "--group=reporting")
+            .withArguments("tasks", "--all")
             .withPluginClasspath()
             .build()
 
