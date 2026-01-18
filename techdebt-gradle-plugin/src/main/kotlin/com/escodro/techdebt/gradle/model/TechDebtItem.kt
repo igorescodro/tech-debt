@@ -18,4 +18,17 @@ data class TechDebtItem(
     val description: String,
     val ticket: String,
     val priority: String
-)
+) {
+    /**
+     * Returns the priority order for the tech debt item.
+     *
+     * @return the priority order
+     */
+    val priorityOrder: Int
+        get() = when (priority) {
+            "HIGH" -> 0
+            "MEDIUM" -> 1
+            "LOW" -> 2
+            else -> 3
+        }
+}
