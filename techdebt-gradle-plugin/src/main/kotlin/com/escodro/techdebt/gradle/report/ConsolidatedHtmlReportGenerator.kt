@@ -1,6 +1,6 @@
-package com.escodro.techdebt.report.html
+package com.escodro.techdebt.gradle.report
 
-import com.escodro.techdebt.report.TechDebtItem
+import com.escodro.techdebt.gradle.model.TechDebtItem
 import java.io.Writer
 import kotlinx.html.BODY
 import kotlinx.html.body
@@ -21,24 +21,33 @@ import kotlinx.html.thead
 import kotlinx.html.tr
 import kotlinx.html.unsafe
 
-/** Generates an HTML report with the tech debt items. */
-internal class TechDebtHtmlReportGenerator {
+/**
+ * Generates a consolidated HTML report with tech debt items from all modules.
+ */
+internal class ConsolidatedHtmlReportGenerator {
 
-    /** Generates an HTML report with the tech debt items. */
+    /**
+     * Generates a consolidated HTML report with the tech debt items.
+     *
+     * @param writer the writer to output the HTML content
+     * @param items the list of tech debt items to include in the report
+     */
     fun generate(writer: Writer, items: List<TechDebtItem>) {
         val totalItems = items.size
+        val moduleCount = items.map { it.moduleName }.distinct().size
         val highItems = items.count { it.priority == "HIGH" }
         val mediumItems = items.count { it.priority == "MEDIUM" }
         val lowItems = items.count { it.priority == "LOW" }
         val noneItems = items.count { it.priority == "NONE" }
 
         writer.appendHTML().html {
-            head { style { unsafe { +TECH_DEBT_ITEM_STYLE.trimIndent() } } }
+            head { style { unsafe { +CONSOLIDATED_REPORT_STYLE.trimIndent() } } }
             body {
-                h1 { +"Tech Debt Report" }
+                h1 { +"Consolidated Tech Debt Report" }
 
                 header(
                     totalItems = totalItems,
+                    moduleCount = moduleCount,
                     highItems = highItems,
                     mediumItems = mediumItems,
                     lowItems = lowItems,
@@ -52,6 +61,7 @@ internal class TechDebtHtmlReportGenerator {
 
     private fun BODY.header(
         totalItems: Int,
+        moduleCount: Int,
         highItems: Int,
         mediumItems: Int,
         lowItems: Int,
@@ -61,6 +71,10 @@ internal class TechDebtHtmlReportGenerator {
             div(classes = "summary-box total") {
                 h2 { +totalItems.toString() }
                 span { +"Total Items" }
+            }
+            div(classes = "summary-box modules") {
+                h2 { +moduleCount.toString() }
+                span { +"Modules" }
             }
             div(classes = "summary-box high") {
                 h2 { +highItems.toString() }
@@ -85,6 +99,7 @@ internal class TechDebtHtmlReportGenerator {
         table {
             thead {
                 tr {
+                    th { +"Module" }
                     th { +"Symbol" }
                     th { +"Description" }
                     th { +"Ticket" }
@@ -94,6 +109,7 @@ internal class TechDebtHtmlReportGenerator {
             tbody {
                 for (item in items) {
                     tr {
+                        td { +item.moduleName }
                         td { strong { +item.name } }
                         td { +item.description }
                         td {
@@ -109,7 +125,7 @@ internal class TechDebtHtmlReportGenerator {
     }
 }
 
-private const val TECH_DEBT_ITEM_STYLE =
+private const val CONSOLIDATED_REPORT_STYLE =
     """
     body {
         font-family: sans-serif;
@@ -124,9 +140,11 @@ private const val TECH_DEBT_ITEM_STYLE =
         display: flex;
         gap: 20px;
         margin-bottom: 30px;
+        flex-wrap: wrap;
     }
     .summary-box {
         flex: 1;
+        min-width: 120px;
         padding: 20px;
         border-radius: 8px;
         color: white;
@@ -143,6 +161,7 @@ private const val TECH_DEBT_ITEM_STYLE =
         letter-spacing: 1px;
     }
     .total { background-color: #4A90E2; }
+    .modules { background-color: #8E44AD; }
     .high { background-color: #E35D5D; }
     .medium { background-color: #F5A623; }
     .low { background-color: #4CAF50; }

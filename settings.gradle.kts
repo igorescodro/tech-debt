@@ -1,3 +1,7 @@
+pluginManagement {
+    includeBuild("techdebt-gradle-plugin")
+}
+
 rootProject.name = "tech-debt"
 include(":techdebt-annotations")
 include(":techdebt-processor")
