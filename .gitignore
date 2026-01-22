@@ -36,3 +36,4 @@ bin/
 *.iml
 .gradle/
 build/
+local.properties
