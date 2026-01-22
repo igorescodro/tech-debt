@@ -3,6 +3,7 @@ package com.escodro.techdebt.gradle
 import com.google.devtools.ksp.gradle.KspExtension
 import java.util.Locale.getDefault
 import java.util.Properties
+import org.apache.log4j.Logger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
@@ -140,12 +141,21 @@ class TechDebtPlugin : Plugin<Project> {
                             ?.getResourceAsStream(TECH_DEBT_PROPERTIES)
                 if (resourceStream == null) {
                     // Fallback for cases where the resource might not be in the classpath during
-                    // tests or specific envs
+                    // tests or specific environments.
+                    Logger.getLogger(TechDebtPlugin::class.java)
+                        .warn("techdebt.properties not found, " + "defaulting version to 1.0.0")
                     return "1.0.0"
                 }
-                load(resourceStream)
+                resourceStream.use { stream -> load(stream) }
             }
-        return props[VERSION_PROPERTY] as String
+
+        val version: String =
+            props.get(VERSION_PROPERTY) as? String
+                ?: throw IllegalStateException("Version not found in techdebt.properties")
+        if (version.isBlank()) {
+            throw IllegalStateException("Version cannot be blank in techdebt.properties")
+        }
+        return version
     }
 
     private companion object {
