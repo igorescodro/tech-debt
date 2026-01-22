@@ -21,9 +21,7 @@ import kotlinx.html.thead
 import kotlinx.html.tr
 import kotlinx.html.unsafe
 
-/**
- * Generates a consolidated HTML report with tech debt items from all modules.
- */
+/** Generates a consolidated HTML report with tech debt items from all modules. */
 internal class ConsolidatedHtmlReportGenerator {
 
     /**

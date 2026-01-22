@@ -26,10 +26,18 @@ data class TechDebtItem(
      * @return the priority order
      */
     val priorityOrder: Int
-        get() = when (priority) {
-            "HIGH" -> 0
-            "MEDIUM" -> 1
-            "LOW" -> 2
-            else -> 3
-        }
+        get() =
+            when (priority) {
+                "HIGH" -> HIGH_PRIORITY
+                "MEDIUM" -> MEDIUM_PRIORITY
+                "LOW" -> LOW_PRIORITY
+                else -> NO_PRIORITY
+            }
+
+    companion object {
+        private const val HIGH_PRIORITY = 0
+        private const val MEDIUM_PRIORITY = 1
+        private const val LOW_PRIORITY = 2
+        private const val NO_PRIORITY = 3
+    }
 }

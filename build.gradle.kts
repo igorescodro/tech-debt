@@ -33,3 +33,19 @@ subprojects {
 tasks.named("check") {
     dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":check"))
 }
+
+tasks.named("build") {
+    dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":build"))
+}
+
+tasks.named("ktfmtCheck") {
+    dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":ktfmtCheck"))
+}
+
+tasks.named("ktfmtFormat") {
+    dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":ktfmtFormat"))
+}
+
+tasks.named("detekt") {
+    dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":detekt"))
+}

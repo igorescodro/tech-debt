@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.compileOnly
 import org.gradle.kotlin.dsl.provideDelegate
 
 plugins {
@@ -6,6 +5,8 @@ plugins {
     alias(libs.plugins.maven.publish)
     `java-gradle-plugin`
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.ktfmt)
 }
 
 group = "io.github.igorescodro"
@@ -40,6 +41,16 @@ gradlePlugin {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom(files("${project.layout.projectDirectory.dir("..")}/config/detekt/detekt.yml"))
+}
+
+ktfmt {
+    kotlinLangStyle()
 }
 
 kotlin {

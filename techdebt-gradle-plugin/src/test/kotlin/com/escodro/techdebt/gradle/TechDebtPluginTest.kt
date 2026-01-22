@@ -10,18 +10,18 @@ import org.junit.jupiter.api.io.TempDir
 
 internal class TechDebtPluginTest {
 
-    @TempDir
-    lateinit var tempDir: File
+    @TempDir lateinit var tempDir: File
 
     @Test
     fun `test plugin applies successfully`() {
         setupProject()
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("tasks", "--all")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("tasks", "--all")
+                .withPluginClasspath()
+                .build()
 
         assertTrue(result.output.contains("generateTechDebtReport"))
     }
@@ -30,11 +30,12 @@ internal class TechDebtPluginTest {
     fun `test generateTechDebtReport task is registered`() {
         setupProject()
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("tasks", "--all")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("tasks", "--all")
+                .withPluginClasspath()
+                .build()
 
         assertTrue(result.output.contains("generateTechDebtReport"))
     }
@@ -46,8 +47,9 @@ internal class TechDebtPluginTest {
         // Create a mock JSON file
         val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
         kspDir.mkdirs()
-        File(kspDir, "report.json").writeText(
-            """
+        File(kspDir, "report.json")
+            .writeText(
+                """
             [
                 {
                     "moduleName": ":app",
@@ -58,14 +60,16 @@ internal class TechDebtPluginTest {
                     "sourceSet": "main"
                 }
             ]
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("generateTechDebtReport")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
 
@@ -88,8 +92,9 @@ internal class TechDebtPluginTest {
         // Create JSON files for multiple modules
         val module1Dir = File(tempDir, "module1/build/generated/ksp/main/resources/techdebt")
         module1Dir.mkdirs()
-        File(module1Dir, "report.json").writeText(
-            """
+        File(module1Dir, "report.json")
+            .writeText(
+                """
             [
                 {
                     "moduleName": ":module1",
@@ -100,13 +105,15 @@ internal class TechDebtPluginTest {
                     "sourceSet": "main"
                 }
             ]
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
         val module2Dir = File(tempDir, "module2/build/generated/ksp/main/resources/techdebt")
         module2Dir.mkdirs()
-        File(module2Dir, "report.json").writeText(
-            """
+        File(module2Dir, "report.json")
+            .writeText(
+                """
             [
                 {
                     "moduleName": ":module2",
@@ -117,17 +124,20 @@ internal class TechDebtPluginTest {
                     "sourceSet": "main"
                 }
             ]
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
         // Update settings to include subprojects
-        File(tempDir, "settings.gradle.kts").writeText(
-            """
+        File(tempDir, "settings.gradle.kts")
+            .writeText(
+                """
             rootProject.name = "test-project"
             include(":module1")
             include(":module2")
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
         // Create minimal build files for subprojects
         File(tempDir, "module1").mkdirs()
@@ -135,11 +145,12 @@ internal class TechDebtPluginTest {
         File(tempDir, "module2").mkdirs()
         File(tempDir, "module2/build.gradle.kts").writeText("")
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("generateTechDebtReport")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
 
@@ -159,8 +170,9 @@ internal class TechDebtPluginTest {
 
         val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
         kspDir.mkdirs()
-        File(kspDir, "report.json").writeText(
-            """
+        File(kspDir, "report.json")
+            .writeText(
+                """
             [
                 {
                     "moduleName": ":b-module",
@@ -187,14 +199,16 @@ internal class TechDebtPluginTest {
                     "sourceSet": "main"
                 }
             ]
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("generateTechDebtReport")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
 
@@ -207,23 +221,28 @@ internal class TechDebtPluginTest {
         val aModuleLowIndex = content.indexOf("AClassLow")
         val bModuleIndex = content.indexOf("BClass")
 
-        assertTrue(aModuleHighIndex < aModuleLowIndex, "HIGH priority should come before LOW in same module")
+        assertTrue(
+            aModuleHighIndex < aModuleLowIndex,
+            "HIGH priority should come before LOW in same module"
+        )
         assertTrue(aModuleLowIndex < bModuleIndex, ":a-module should come before :b-module")
     }
 
     @Test
     fun `test custom output file`() {
         setupProject()
-        File(tempDir, "build.gradle.kts").writeText(
-            """
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
             plugins {
                 id("io.github.igorescodro.techdebt")
             }
             techDebtReport {
                 outputFile.set(layout.buildDirectory.file("custom/report.html"))
             }
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
         GradleRunner.create()
             .withProjectDir(tempDir)
@@ -232,14 +251,18 @@ internal class TechDebtPluginTest {
             .build()
 
         val reportFile = File(tempDir, "build/custom/report.html")
-        assertTrue(reportFile.exists(), "Custom report file should exist at ${reportFile.absolutePath}")
+        assertTrue(
+            reportFile.exists(),
+            "Custom report file should exist at ${reportFile.absolutePath}"
+        )
     }
 
     @Test
     fun `test ksp and dependencies are automatically added for JVM project`() {
         setupProject()
-        File(tempDir, "build.gradle.kts").writeText(
-            """
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
             plugins {
                 id("org.jetbrains.kotlin.jvm") version "2.3.0"
                 id("io.github.igorescodro.techdebt")
@@ -274,14 +297,16 @@ internal class TechDebtPluginTest {
                     }
                 }
             }
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("checkKspConfig")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("checkKspConfig")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
     }
@@ -289,8 +314,9 @@ internal class TechDebtPluginTest {
     @Test
     fun `test ksp and dependencies are automatically added for KMP project`() {
         setupProject()
-        File(tempDir, "build.gradle.kts").writeText(
-            """
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
             plugins {
                 id("org.jetbrains.kotlin.multiplatform") version "2.3.0"
                 id("io.github.igorescodro.techdebt")
@@ -328,14 +354,16 @@ internal class TechDebtPluginTest {
                     if (!hasAnnotations) throw GradleException("techdebt-annotations not found in commonMainImplementation")
                 }
             }
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("checkKspConfig")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("checkKspConfig")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
     }
@@ -343,8 +371,9 @@ internal class TechDebtPluginTest {
     @Test
     fun `test ksp and dependencies are automatically added for Android library`() {
         setupProject()
-        File(tempDir, "build.gradle.kts").writeText(
-            """
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
             plugins {
                 id("com.android.library")
                 id("io.github.igorescodro.techdebt")
@@ -385,14 +414,16 @@ internal class TechDebtPluginTest {
                     }
                 }
             }
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("checkKspConfig")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("checkKspConfig")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
     }
@@ -400,8 +431,9 @@ internal class TechDebtPluginTest {
     @Test
     fun `test ksp and dependencies are automatically added for Android app`() {
         setupProject()
-        File(tempDir, "build.gradle.kts").writeText(
-            """
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
             plugins {
                 id("com.android.application")
                 id("io.github.igorescodro.techdebt")
@@ -442,14 +474,16 @@ internal class TechDebtPluginTest {
                     }
                 }
             }
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("checkKspConfig")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("checkKspConfig")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
     }
@@ -457,8 +491,9 @@ internal class TechDebtPluginTest {
     @Test
     fun `test moduleName KSP argument is correctly set`() {
         setupProject()
-        File(tempDir, "build.gradle.kts").writeText(
-            """
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
             plugins {
                 id("org.jetbrains.kotlin.jvm") version "2.3.0"
                 id("io.github.igorescodro.techdebt")
@@ -480,14 +515,16 @@ internal class TechDebtPluginTest {
                     }
                 }
             }
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("checkKspArgs")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("checkKspArgs")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspArgs")?.outcome)
     }
@@ -499,8 +536,9 @@ internal class TechDebtPluginTest {
         // commonMain
         val commonMainDir = File(tempDir, "build/generated/ksp/commonMain/resources/techdebt")
         commonMainDir.mkdirs()
-        File(commonMainDir, "report.json").writeText(
-            """
+        File(commonMainDir, "report.json")
+            .writeText(
+                """
             [
                 {
                     "moduleName": ":app",
@@ -511,14 +549,16 @@ internal class TechDebtPluginTest {
                     "sourceSet": "unknown"
                 }
             ]
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
         // iosArm64
         val iosDir = File(tempDir, "build/generated/ksp/iosArm64/resources/techdebt")
         iosDir.mkdirs()
-        File(iosDir, "report.json").writeText(
-            """
+        File(iosDir, "report.json")
+            .writeText(
+                """
             [
                 {
                     "moduleName": ":app",
@@ -529,14 +569,16 @@ internal class TechDebtPluginTest {
                     "sourceSet": "unknown"
                 }
             ]
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
         // Only iOS debt
         val iosOnlyDir = File(tempDir, "build/generated/ksp/iosX64/resources/techdebt")
         iosOnlyDir.mkdirs()
-        File(iosOnlyDir, "report.json").writeText(
-            """
+        File(iosOnlyDir, "report.json")
+            .writeText(
+                """
             [
                 {
                     "moduleName": ":app",
@@ -547,14 +589,16 @@ internal class TechDebtPluginTest {
                     "sourceSet": "unknown"
                 }
             ]
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
 
-        val result = GradleRunner.create()
-            .withProjectDir(tempDir)
-            .withArguments("generateTechDebtReport")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
 
@@ -565,7 +609,10 @@ internal class TechDebtPluginTest {
         assertTrue(content.contains("SharedClass"))
         val sharedCount = "SharedClass".toRegex().findAll(content).count()
         assertEquals(1, sharedCount, "SharedClass should only appear once")
-        assertTrue(content.contains("commonMain, iosArm64"), "Should show both source sets for shared debt")
+        assertTrue(
+            content.contains("commonMain, iosArm64"),
+            "Should show both source sets for shared debt"
+        )
 
         // IosOnlyClass should show iosX64
         assertTrue(content.contains("IosOnlyClass"))
@@ -573,18 +620,22 @@ internal class TechDebtPluginTest {
     }
 
     private fun setupProject() {
-        File(tempDir, "settings.gradle.kts").writeText(
-            """
+        File(tempDir, "settings.gradle.kts")
+            .writeText(
+                """
             rootProject.name = "test-project"
-            """.trimIndent()
-        )
-
-        File(tempDir, "build.gradle.kts").writeText(
             """
+                    .trimIndent()
+            )
+
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
             plugins {
                 id("io.github.igorescodro.techdebt")
             }
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
     }
 }

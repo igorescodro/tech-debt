@@ -20,12 +20,13 @@ internal class TechDebtItemTest {
         assertEquals(3, other.priorityOrder)
     }
 
-    private fun createItem(priority: String) = TechDebtItem(
-        moduleName = "module",
-        name = "name",
-        description = "description",
-        ticket = "ticket",
-        priority = priority,
-        sourceSet = "main"
-    )
+    private fun createItem(priority: String) =
+        TechDebtItem(
+            moduleName = "module",
+            name = "name",
+            description = "description",
+            ticket = "ticket",
+            priority = priority,
+            sourceSet = "main"
+        )
 }
