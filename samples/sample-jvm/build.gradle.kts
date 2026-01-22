@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.jvm)
     id("io.github.igorescodro.techdebt")
 }
 
@@ -9,7 +8,6 @@ repositories {
 }
 
 kotlin {
-    jvm()
     jvmToolchain(17)
 }
 
