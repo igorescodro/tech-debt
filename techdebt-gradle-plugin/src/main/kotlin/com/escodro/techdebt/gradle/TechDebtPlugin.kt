@@ -114,7 +114,7 @@ class TechDebtPlugin : Plugin<Project> {
             kspExtension.arg("moduleName", path)
 
             reportTask.configure { task ->
-                task?.dependsOn(tasks.matching { it.name.startsWith("ksp") })
+                task.dependsOn(tasks.matching { it.name.startsWith("ksp") })
             }
         }
     }

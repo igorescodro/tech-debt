@@ -7,7 +7,7 @@ junit = "5.10.1"
 junit-platform = "1.10.1"
 
 ksp = "2.3.4"
-android-gradle-plugin = "8.2.2"
+android-gradle-plugin = "8.13.2"
 maven-publish = "0.35.0"
 detekt = "1.23.4"
 ktfmt = "0.16.0"
@@ -25,6 +25,8 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform" }
 
 [plugins]
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

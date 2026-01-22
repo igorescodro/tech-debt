@@ -26,7 +26,7 @@ compilation process. Each module generates its own local report, which is then c
 
 <img src="assets/screenshot-report-example.png" alt="Screenshot of TechDebt report example">
 
-### 🧾 [Link to example](https://htmlpreview.github.io/?https://github.com/igorescodro/tech-debt/blob/main/sample/assets/report.html)
+### 🧾 [Link to example](https://htmlpreview.github.io/?https://github.com/igorescodro/tech-debt/blob/main/samples/sample-jvm/assets/report.html)
 
 ## Quick Start
 
