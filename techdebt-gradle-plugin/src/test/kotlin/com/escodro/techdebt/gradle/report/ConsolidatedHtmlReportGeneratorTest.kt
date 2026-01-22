@@ -11,13 +11,14 @@ internal class ConsolidatedHtmlReportGeneratorTest {
 
     @Test
     fun `test generator creates HTML with correct summary counts`() {
-        val items = listOf(
-            createItem(module = "A", priority = "HIGH"),
-            createItem(module = "A", priority = "MEDIUM"),
-            createItem(module = "B", priority = "HIGH"),
-            createItem(module = "C", priority = "LOW"),
-            createItem(module = "C", priority = "NONE")
-        )
+        val items =
+            listOf(
+                createItem(module = "A", priority = "HIGH"),
+                createItem(module = "A", priority = "MEDIUM"),
+                createItem(module = "B", priority = "HIGH"),
+                createItem(module = "C", priority = "LOW"),
+                createItem(module = "C", priority = "NONE")
+            )
 
         val writer = StringWriter()
         generator.generate(writer, items)
@@ -32,16 +33,17 @@ internal class ConsolidatedHtmlReportGeneratorTest {
 
     @Test
     fun `test generator includes item details`() {
-        val items = listOf(
-            TechDebtItem(
-                moduleName = ":my-module",
-                name = "MyClass",
-                description = "Fix this later",
-                ticket = "PROJ-456",
-                priority = "HIGH",
-                sourceSet = "main"
+        val items =
+            listOf(
+                TechDebtItem(
+                    moduleName = ":my-module",
+                    name = "MyClass",
+                    description = "Fix this later",
+                    ticket = "PROJ-456",
+                    priority = "HIGH",
+                    sourceSet = "main"
+                )
             )
-        )
 
         val writer = StringWriter()
         generator.generate(writer, items)
@@ -54,12 +56,13 @@ internal class ConsolidatedHtmlReportGeneratorTest {
         assertTrue(html.contains("HIGH"))
     }
 
-    private fun createItem(module: String, priority: String) = TechDebtItem(
-        moduleName = module,
-        name = "name",
-        description = "description",
-        ticket = "ticket",
-        priority = priority,
-        sourceSet = "main"
-    )
+    private fun createItem(module: String, priority: String) =
+        TechDebtItem(
+            moduleName = module,
+            name = "name",
+            description = "description",
+            ticket = "ticket",
+            priority = priority,
+            sourceSet = "main"
+        )
 }
