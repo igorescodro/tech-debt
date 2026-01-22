@@ -511,7 +511,7 @@ internal class TechDebtPluginTest {
                     }
                     val moduleName = ksp.arguments["moduleName"]
                     if (moduleName != project.path) {
-                        throw GradleException("moduleName KSP argument expected '${"$"}{project.path}' but was 'moduleName'")
+                        throw GradleException("moduleName KSP argument expected '${"$"}{project.path}' but was ${"$"}moduleName'")
                     }
                 }
             }
