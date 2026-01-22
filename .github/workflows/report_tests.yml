@@ -1,0 +1,94 @@
+name: Report Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-report:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Run Android Sample Report
+      run: ./gradlew clean :samples:sample-android:generateTechDebtReport
+
+    - name: Verify Android Report
+      run: |
+        REPORT_PATH="samples/sample-android/build/reports/techdebt/consolidated-report.html"
+        if [ ! -s "$REPORT_PATH" ]; then
+          echo "Android report not found or empty at $REPORT_PATH"
+          exit 1
+        fi
+        grep -q "AndroidSample" "$REPORT_PATH" || (echo "Missing AndroidSample in report" && exit 1)
+        grep -q "Android specific debt" "$REPORT_PATH" || (echo "Missing description in report" && exit 1)
+        grep -q "ANDROID-1" "$REPORT_PATH" || (echo "Missing ticket in report" && exit 1)
+
+  kmp-report:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Run KMP Sample Report
+      run: ./gradlew clean :samples:sample-kmp:generateTechDebtReport
+
+    - name: Verify KMP Report
+      run: |
+        REPORT_PATH="samples/sample-kmp/build/reports/techdebt/consolidated-report.html"
+        if [ ! -s "$REPORT_PATH" ]; then
+          echo "KMP report not found or empty at $REPORT_PATH"
+          exit 1
+        fi
+        grep -q "KmpSample" "$REPORT_PATH" || (echo "Missing KmpSample in report" && exit 1)
+        grep -q "KMP common debt" "$REPORT_PATH" || (echo "Missing description in report" && exit 1)
+        grep -q "KMP-1" "$REPORT_PATH" || (echo "Missing ticket in report" && exit 1)
+
+  jvm-report:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Run JVM Sample Report
+      run: ./gradlew clean :samples:sample-jvm:generateTechDebtReport
+
+    - name: Verify JVM Report
+      run: |
+        REPORT_PATH="samples/sample-jvm/assets/report.html"
+        if [ ! -s "$REPORT_PATH" ]; then
+          echo "JVM report not found or empty at $REPORT_PATH"
+          exit 1
+        fi
+        grep -q "Sample" "$REPORT_PATH" || (echo "Missing Sample in report" && exit 1)
+        grep -q "This class needs a better name" "$REPORT_PATH" || (echo "Missing description in report" && exit 1)
+        grep -q "TD-1" "$REPORT_PATH" || (echo "Missing ticket in report" && exit 1)
+        grep -q "someProperty" "$REPORT_PATH" || (echo "Missing someProperty in report" && exit 1)
