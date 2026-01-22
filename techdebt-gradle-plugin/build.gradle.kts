@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.compileOnly
+import org.gradle.kotlin.dsl.provideDelegate
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -12,12 +13,15 @@ version = libs.versions.techdebt.get()
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
     implementation(libs.kotlinx.html)
     implementation(libs.kotlinx.serialization.json)
-    compileOnly(libs.ksp.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
+    implementation(libs.ksp.gradle.plugin)
+    implementation(libs.android.gradle.plugin)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -40,6 +44,19 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+}
+
+val generateVersion by tasks.registering(WriteProperties::class) {
+    destinationFile.set(layout.buildDirectory.file("generated/techdebt/techdebt.properties"))
+    property("version", project.version.toString())
+}
+
+sourceSets.main {
+    resources.srcDir(generateVersion.map { it.destinationFile.get().asFile.parentFile })
+}
+
+tasks.named<ProcessResources>("processResources") {
+    dependsOn(generateVersion)
 }
 
 mavenPublishing {
