@@ -150,10 +150,9 @@ class TechDebtPlugin : Plugin<Project> {
             }
 
         val version: String =
-            props.get(VERSION_PROPERTY) as? String
-                ?: throw IllegalStateException("Version not found in techdebt.properties")
+            props[VERSION_PROPERTY] as? String ?: error("Version not found in techdebt.properties")
         if (version.isBlank()) {
-            throw IllegalStateException("Version cannot be blank in techdebt.properties")
+            error("Version cannot be blank in techdebt.properties")
         }
         return version
     }
