@@ -236,6 +236,263 @@ internal class TechDebtPluginTest {
     }
 
     @Test
+    fun `test ksp and dependencies are automatically added for JVM project`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts").writeText(
+            """
+            plugins {
+                id("org.jetbrains.kotlin.jvm") version "2.3.0"
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            repositories {
+                mavenCentral()
+            }
+            
+            tasks.register("checkKspConfig") {
+                doLast {
+                    val hasKspPlugin = project.pluginManager.hasPlugin("com.google.devtools.ksp")
+                    if (!hasKspPlugin) {
+                        throw GradleException("KSP plugin was not automatically applied")
+                    }
+
+                    val kspConfig = project.configurations.findByName("ksp")
+                    val implementationConfig = project.configurations.getByName("implementation")
+                    
+                    if (kspConfig == null) {
+                        throw GradleException("KSP configuration not found")
+                    }
+                    
+                    val hasProcessor = kspConfig.dependencies.any { it.name == "techdebt-processor" }
+                    val hasAnnotations = implementationConfig.dependencies.any { it.name == "techdebt-annotations" }
+                    
+                    if (!hasProcessor) {
+                        throw GradleException("techdebt-processor dependency not found in ksp configuration")
+                    }
+                    if (!hasAnnotations) {
+                        throw GradleException("techdebt-annotations dependency not found in implementation configuration")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(tempDir)
+            .withArguments("checkKspConfig")
+            .withPluginClasspath()
+            .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
+    }
+
+    @Test
+    fun `test ksp and dependencies are automatically added for KMP project`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts").writeText(
+            """
+            plugins {
+                id("org.jetbrains.kotlin.multiplatform") version "2.3.0"
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            repositories {
+                mavenCentral()
+            }
+            
+            kotlin {
+                jvm()
+                iosArm64()
+            }
+            
+            tasks.register("checkKspConfig") {
+                doLast {
+                    val hasKspPlugin = project.pluginManager.hasPlugin("com.google.devtools.ksp")
+                    if (!hasKspPlugin) {
+                        throw GradleException("KSP plugin was not automatically applied")
+                    }
+
+                    val kspJvmConfig = project.configurations.findByName("kspJvm")
+                    val kspIosArm64Config = project.configurations.findByName("kspIosArm64")
+                    val commonMainImplementationConfig = project.configurations.getByName("commonMainImplementation")
+                    
+                    if (kspJvmConfig == null) throw GradleException("kspJvm configuration not found")
+                    if (kspIosArm64Config == null) throw GradleException("kspIosArm64 configuration not found")
+                    
+                    val hasProcessorJvm = kspJvmConfig.dependencies.any { it.name == "techdebt-processor" }
+                    val hasProcessorIos = kspIosArm64Config.dependencies.any { it.name == "techdebt-processor" }
+                    val hasAnnotations = commonMainImplementationConfig.dependencies.any { it.name == "techdebt-annotations" }
+                    
+                    if (!hasProcessorJvm) throw GradleException("techdebt-processor not found in kspJvm")
+                    if (!hasProcessorIos) throw GradleException("techdebt-processor not found in kspIosArm64")
+                    if (!hasAnnotations) throw GradleException("techdebt-annotations not found in commonMainImplementation")
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(tempDir)
+            .withArguments("checkKspConfig")
+            .withPluginClasspath()
+            .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
+    }
+
+    @Test
+    fun `test ksp and dependencies are automatically added for Android library`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts").writeText(
+            """
+            plugins {
+                id("com.android.library")
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            repositories {
+                mavenCentral()
+                google()
+            }
+            
+            android {
+                namespace = "com.escodro.techdebt.test"
+                compileSdk = 34
+            }
+            
+            tasks.register("checkKspConfig") {
+                doLast {
+                    val hasKspPlugin = project.pluginManager.hasPlugin("com.google.devtools.ksp")
+                    if (!hasKspPlugin) {
+                        throw GradleException("KSP plugin was not automatically applied")
+                    }
+
+                    val kspConfig = project.configurations.findByName("ksp")
+                    val implementationConfig = project.configurations.getByName("implementation")
+                    
+                    if (kspConfig == null) {
+                        throw GradleException("KSP configuration not found")
+                    }
+                    
+                    val hasProcessor = kspConfig.dependencies.any { it.name == "techdebt-processor" }
+                    val hasAnnotations = implementationConfig.dependencies.any { it.name == "techdebt-annotations" }
+                    
+                    if (!hasProcessor) {
+                        throw GradleException("techdebt-processor dependency not found in ksp configuration")
+                    }
+                    if (!hasAnnotations) {
+                        throw GradleException("techdebt-annotations dependency not found in implementation configuration")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(tempDir)
+            .withArguments("checkKspConfig")
+            .withPluginClasspath()
+            .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
+    }
+
+    @Test
+    fun `test ksp and dependencies are automatically added for Android app`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts").writeText(
+            """
+            plugins {
+                id("com.android.application")
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            repositories {
+                mavenCentral()
+                google()
+            }
+            
+            android {
+                namespace = "com.escodro.techdebt.test"
+                compileSdk = 34
+            }
+            
+            tasks.register("checkKspConfig") {
+                doLast {
+                    val hasKspPlugin = project.pluginManager.hasPlugin("com.google.devtools.ksp")
+                    if (!hasKspPlugin) {
+                        throw GradleException("KSP plugin was not automatically applied")
+                    }
+
+                    val kspConfig = project.configurations.findByName("ksp")
+                    val implementationConfig = project.configurations.getByName("implementation")
+                    
+                    if (kspConfig == null) {
+                        throw GradleException("KSP configuration not found")
+                    }
+                    
+                    val hasProcessor = kspConfig.dependencies.any { it.name == "techdebt-processor" }
+                    val hasAnnotations = implementationConfig.dependencies.any { it.name == "techdebt-annotations" }
+                    
+                    if (!hasProcessor) {
+                        throw GradleException("techdebt-processor dependency not found in ksp configuration")
+                    }
+                    if (!hasAnnotations) {
+                        throw GradleException("techdebt-annotations dependency not found in implementation configuration")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(tempDir)
+            .withArguments("checkKspConfig")
+            .withPluginClasspath()
+            .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspConfig")?.outcome)
+    }
+
+    @Test
+    fun `test moduleName KSP argument is correctly set`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts").writeText(
+            """
+            plugins {
+                id("org.jetbrains.kotlin.jvm") version "2.3.0"
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            repositories {
+                mavenCentral()
+            }
+            
+            tasks.register("checkKspArgs") {
+                doLast {
+                    val ksp = project.extensions.findByName("ksp") as? com.google.devtools.ksp.gradle.KspExtension
+                    if (ksp == null) {
+                        throw GradleException("KSP extension not found")
+                    }
+                    val moduleName = ksp.arguments["moduleName"]
+                    if (moduleName != project.path) {
+                        throw GradleException("moduleName KSP argument expected '${"$"}{project.path}' but was 'moduleName'")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(tempDir)
+            .withArguments("checkKspArgs")
+            .withPluginClasspath()
+            .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspArgs")?.outcome)
+    }
+
+    @Test
     fun `test multiplatform aggregation`() {
         setupProject()
 
