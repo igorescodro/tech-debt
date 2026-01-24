@@ -81,14 +81,22 @@ class TechDebtPlugin : Plugin<Project> {
             extensions.getByType(KotlinMultiplatformExtension::class.java).targets.all { target ->
                 if (target.name == KMP_METADATA_TARGET) return@all
 
-                dependencies.add(
-                    "ksp${
-                    target.name.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString()
-                    }
-                }",
-                    "$TECH_DEBT_PROCESSOR_DEPENDENCY:${getPluginVersion()}"
-                )
+                val configurationName =
+                    "ksp${target.name.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString()
+                }}"
+
+                // Check if the configuration exists before adding the dependency
+                if (configurations.findByName(configurationName) != null) {
+                    dependencies.add(
+                        configurationName,
+                        "$TECH_DEBT_PROCESSOR_DEPENDENCY:${getPluginVersion()}"
+                    )
+                } else {
+                    // Fallback: Use the general 'ksp' configuration if the specific one doesn't
+                    // exist or just skip it if it's not applicable for this target.
+                    dependencies.add("ksp", "$TECH_DEBT_PROCESSOR_DEPENDENCY:${getPluginVersion()}")
+                }
             }
             dependencies.add(
                 COMMON_MAIN_IMPLEMENTATION,
