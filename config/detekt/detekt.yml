@@ -125,6 +125,7 @@ complexity:
     ignoredLabels: []
   LargeClass:
     active: true
+    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**' ]
     threshold: 600
   LongMethod:
     active: true

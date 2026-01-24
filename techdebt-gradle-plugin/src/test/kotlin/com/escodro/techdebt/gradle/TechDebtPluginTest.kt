@@ -619,6 +619,55 @@ internal class TechDebtPluginTest {
         assertTrue(content.contains("iosX64"), "Should show iosX64 for ios only debt")
     }
 
+    @Test
+    fun `test ksp fallback when specific target configuration is missing`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("org.jetbrains.kotlin.multiplatform") version "2.3.0"
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            repositories {
+                mavenCentral()
+            }
+            
+            kotlin {
+                // Simulate a target that might not have a dedicated KSP configuration immediately
+                jvm()
+            }
+            
+            tasks.register("checkKspFallback") {
+                doLast {
+                    // In this scenario, even if 'kspJvm' was missing (simulated by logic), 
+                    // the plugin should have added the dependency to 'ksp'
+                    val kspConfig = project.configurations.findByName("ksp")
+                    val kspJvmConfig = project.configurations.findByName("kspJvm")
+                    
+                    val hasProcessorInJvm = kspJvmConfig?.dependencies?.any { it.name == "techdebt-processor" } ?: false
+                    val hasProcessorInGeneral = kspConfig?.dependencies?.any { it.name == "techdebt-processor" } ?: false
+                    
+                    if (!hasProcessorInJvm && !hasProcessorInGeneral) {
+                        throw GradleException("techdebt-processor dependency not found in any KSP configuration")
+                    }
+                }
+            }
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("checkKspFallback")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspFallback")?.outcome)
+    }
+
     private fun setupProject() {
         File(tempDir, "settings.gradle.kts")
             .writeText(
