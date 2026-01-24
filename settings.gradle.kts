@@ -2,6 +2,7 @@ pluginManagement {
     includeBuild("techdebt-gradle-plugin")
     repositories {
         google()
+        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -10,6 +11,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         google()
+        mavenLocal()
         mavenCentral()
     }
 }

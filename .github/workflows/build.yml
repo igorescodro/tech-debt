@@ -25,11 +25,11 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Publish to Maven Local
+      run: ./gradlew publishToMavenLocal :techdebt-gradle-plugin:publishToMavenLocal --stacktrace -Pskip.signing
+
     - name: Build with Gradle
       run: ./gradlew build
-
-    - name: Publish to Maven Local
-      run: ./gradlew publishToMavenLocal -Pskip.signing
 
     - name: Verify Artifacts
       run: |

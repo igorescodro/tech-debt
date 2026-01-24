@@ -13,6 +13,7 @@ group = "io.github.igorescodro"
 version = libs.versions.techdebt.get()
 
 repositories {
+    mavenLocal()
     mavenCentral()
     google()
 }

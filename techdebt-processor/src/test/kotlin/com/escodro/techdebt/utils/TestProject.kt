@@ -40,6 +40,7 @@ class TestProject(private val projectDir: File) {
             }
 
             repositories {
+                mavenLocal()
                 mavenCentral()
             }
 

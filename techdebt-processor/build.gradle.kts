@@ -9,6 +9,7 @@ version = libs.versions.techdebt.get()
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {

@@ -152,7 +152,10 @@ internal class TechDebtProcessorIntegrationTest {
                 kotlin("jvm") version "2.3.0"
                 id("com.google.devtools.ksp") version "2.3.4"
             }
-            repositories { mavenCentral() }
+            repositories { 
+                mavenLocal()
+                mavenCentral()
+            }
             dependencies {
                 implementation("io.github.igorescodro:techdebt-annotations:0.1.0-beta01")
                 ksp(files(${classpath.joinToString { "\"$it\"" }}))

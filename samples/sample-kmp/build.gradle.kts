@@ -13,5 +13,6 @@ kotlin {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }

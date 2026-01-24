@@ -269,6 +269,7 @@ internal class TechDebtPluginTest {
             }
             
             repositories {
+                mavenLocal()
                 mavenCentral()
             }
             
@@ -323,6 +324,7 @@ internal class TechDebtPluginTest {
             }
             
             repositories {
+                mavenLocal()
                 mavenCentral()
             }
             
@@ -380,6 +382,7 @@ internal class TechDebtPluginTest {
             }
             
             repositories {
+                mavenLocal()
                 mavenCentral()
                 google()
             }
@@ -440,6 +443,7 @@ internal class TechDebtPluginTest {
             }
             
             repositories {
+                mavenLocal()
                 mavenCentral()
                 google()
             }
@@ -500,6 +504,7 @@ internal class TechDebtPluginTest {
             }
             
             repositories {
+                mavenLocal()
                 mavenCentral()
             }
             
@@ -631,6 +636,7 @@ internal class TechDebtPluginTest {
             }
             
             repositories {
+                mavenLocal()
                 mavenCentral()
             }
             

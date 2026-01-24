@@ -24,6 +24,9 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Publish to Maven Local
+      run: ./gradlew publishToMavenLocal :techdebt-gradle-plugin:publishToMavenLocal --stacktrace -Pskip.signing
+
     - name: Run Android Sample Report
       run: ./gradlew clean :samples:sample-android:generateTechDebtReport
 
@@ -51,6 +54,9 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Publish to Maven Local
+      run: ./gradlew publishToMavenLocal :techdebt-gradle-plugin:publishToMavenLocal --stacktrace -Pskip.signing
+
     - name: Run KMP Sample Report
       run: ./gradlew clean :samples:sample-kmp:generateTechDebtReport
 
@@ -77,6 +83,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
+
+    - name: Publish to Maven Local
+      run: ./gradlew publishToMavenLocal :techdebt-gradle-plugin:publishToMavenLocal --stacktrace -Pskip.signing
 
     - name: Run JVM Sample Report
       run: ./gradlew clean :samples:sample-jvm:generateTechDebtReport
