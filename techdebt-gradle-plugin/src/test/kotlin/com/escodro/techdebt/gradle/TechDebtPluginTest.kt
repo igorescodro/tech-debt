@@ -630,9 +630,164 @@ internal class TechDebtPluginTest {
         assertTrue(reportFile.exists(), "Consolidated report should exist")
 
         val content = reportFile.readText()
-        assertTrue(content.contains("Suppressed Rules"), "Report should contain Suppressed Rules section")
-        assertTrue(content.contains("MagicNumber"), "Report should contain the suppressed rule name")
+        assertTrue(
+            content.contains("Suppressed Rules"),
+            "Report should contain Suppressed Rules section"
+        )
+        assertTrue(
+            content.contains("MagicNumber"),
+            "Report should contain the suppressed rule name"
+        )
         assertTrue(content.contains("com.example.MyClass"), "Report should contain the class name")
+    }
+
+    @Test
+    fun `test generateTechDebtReport includes multiple suppressed rules from JSON`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            techDebtReport {
+                collectSuppress.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Create a mock JSON file with multiple suppressed items for the same symbol
+        val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
+        kspDir.mkdirs()
+        File(kspDir, "report.json")
+            .writeText(
+                """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "com.example.MyClass",
+                    "description": "MagicNumber",
+                    "ticket": "",
+                    "priority": "",
+                    "sourceSet": "main",
+                    "type": "SUPPRESS"
+                },
+                {
+                    "moduleName": ":app",
+                    "name": "com.example.MyClass",
+                    "description": "LongMethod",
+                    "ticket": "",
+                    "priority": "",
+                    "sourceSet": "main",
+                    "type": "SUPPRESS"
+                }
+            ]
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists(), "Consolidated report should exist")
+
+        val content = reportFile.readText()
+        assertTrue(
+            content.contains("Suppressed Rules"),
+            "Report should contain Suppressed Rules section"
+        )
+        assertTrue(content.contains("MagicNumber"), "Report should contain MagicNumber")
+        assertTrue(content.contains("LongMethod"), "Report should contain LongMethod")
+
+        // Count occurrences of com.example.MyClass in Suppressed Rules section
+        // Note: The HTML structure might vary, but we expect both rules to be listed.
+        val myClassCount = "com.example.MyClass".toRegex().findAll(content).count()
+        assertTrue(
+            myClassCount >= 2,
+            "com.example.MyClass should appear at least twice for multiple rules"
+        )
+    }
+
+    @Test
+    fun `test generateTechDebtReport includes suppressed rules from multiple annotations in JSON`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            techDebtReport {
+                collectSuppress.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Create a mock JSON file with items from multiple @Suppress annotations for the same
+        // symbol
+        val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
+        kspDir.mkdirs()
+        File(kspDir, "report.json")
+            .writeText(
+                """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "com.example.MyClass",
+                    "description": "MagicNumber",
+                    "ticket": "",
+                    "priority": "",
+                    "sourceSet": "main",
+                    "type": "SUPPRESS"
+                },
+                {
+                    "moduleName": ":app",
+                    "name": "com.example.MyClass",
+                    "description": "LongMethod",
+                    "ticket": "",
+                    "priority": "",
+                    "sourceSet": "main",
+                    "type": "SUPPRESS"
+                }
+            ]
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists(), "Consolidated report should exist")
+
+        val content = reportFile.readText()
+        assertTrue(
+            content.contains("Suppressed Rules"),
+            "Report should contain Suppressed Rules section"
+        )
+        assertTrue(content.contains("MagicNumber"), "Report should contain MagicNumber")
+        assertTrue(content.contains("LongMethod"), "Report should contain LongMethod")
+
+        val myClassCount = "com.example.MyClass".toRegex().findAll(content).count()
+        assertTrue(
+            myClassCount >= 2,
+            "com.example.MyClass should appear at least twice for rules from multiple annotations"
+        )
     }
 
     @Test
