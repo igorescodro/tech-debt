@@ -31,11 +31,20 @@ subprojects {
     }
 }
 
+val test by tasks.registering {
+    dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":test"))
+    subprojects.forEach { subproject ->
+        dependsOn(subproject.tasks.matching { it.name == "test" })
+    }
+}
+
 tasks.named("check") {
+    dependsOn(test)
     dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":check"))
 }
 
 tasks.named("build") {
+    dependsOn(test)
     dependsOn(gradle.includedBuild("techdebt-gradle-plugin").task(":build"))
 }
 
