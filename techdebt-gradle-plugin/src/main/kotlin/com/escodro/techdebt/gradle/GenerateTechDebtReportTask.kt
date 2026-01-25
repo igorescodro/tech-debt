@@ -62,7 +62,7 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         items
             .groupBy {
                 // Group by all fields except sourceSet
-                listOf(it.moduleName, it.name, it.description, it.ticket, it.priority)
+                listOf(it.moduleName, it.name, it.description, it.ticket, it.priority, it.type)
             }
             .map { (_, group) ->
                 val first = group.first()

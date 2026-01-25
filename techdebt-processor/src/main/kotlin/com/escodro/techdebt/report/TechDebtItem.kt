@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
  * @property description the tech debt description
  * @property ticket the ticket reference
  * @property priority the priority of the tech debt
+ * @property sourceSet the source set where the tech debt is located
+ * @property type the type of the tech debt item
  */
 @Serializable
 data class TechDebtItem(
@@ -18,5 +20,16 @@ data class TechDebtItem(
     val description: String,
     val ticket: String,
     val priority: String,
-    val sourceSet: String
+    val sourceSet: String,
+    val type: TechDebtItemType = TechDebtItemType.TECH_DEBT
 )
+
+/** Represents the type of technical debt item. */
+@Serializable
+enum class TechDebtItemType {
+    /** Item collected from @TechDebt annotation. */
+    TECH_DEBT,
+
+    /** Item collected from @Suppress annotation. */
+    SUPPRESS
+}

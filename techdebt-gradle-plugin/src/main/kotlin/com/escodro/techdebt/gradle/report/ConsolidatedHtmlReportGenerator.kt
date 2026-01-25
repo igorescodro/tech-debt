@@ -1,6 +1,7 @@
 package com.escodro.techdebt.gradle.report
 
 import com.escodro.techdebt.gradle.model.TechDebtItem
+import com.escodro.techdebt.gradle.model.TechDebtItemType
 import java.io.Writer
 import kotlinx.html.BODY
 import kotlinx.html.body
@@ -31,11 +32,14 @@ internal class ConsolidatedHtmlReportGenerator {
      * @param items the list of tech debt items to include in the report
      */
     fun generate(writer: Writer, items: List<TechDebtItem>) {
-        val totalItems = items.size
-        val highItems = items.count { it.priority == "HIGH" }
-        val mediumItems = items.count { it.priority == "MEDIUM" }
-        val lowItems = items.count { it.priority == "LOW" }
-        val noneItems = items.count { it.priority == "NONE" }
+        val techDebtItems = items.filter { it.type == TechDebtItemType.TECH_DEBT }
+        val suppressedItems = items.filter { it.type == TechDebtItemType.SUPPRESS }
+
+        val totalItems = techDebtItems.size
+        val highItems = techDebtItems.count { it.priority == "HIGH" }
+        val mediumItems = techDebtItems.count { it.priority == "MEDIUM" }
+        val lowItems = techDebtItems.count { it.priority == "LOW" }
+        val noneItems = techDebtItems.count { it.priority == "NONE" }
 
         writer.appendHTML().html {
             head { style { unsafe { +CONSOLIDATED_REPORT_STYLE.trimIndent() } } }
@@ -50,7 +54,13 @@ internal class ConsolidatedHtmlReportGenerator {
                     noneItems = noneItems
                 )
 
-                table(items = items)
+                h2 { +"Annotated Tech Debt" }
+                table(items = techDebtItems)
+
+                if (suppressedItems.isNotEmpty()) {
+                    h2 { +"Suppressed Rules" }
+                    table(items = suppressedItems, isSuppress = true)
+                }
             }
         }
     }
@@ -86,15 +96,23 @@ internal class ConsolidatedHtmlReportGenerator {
         }
     }
 
-    private fun BODY.table(items: List<TechDebtItem>) {
+    private fun BODY.table(items: List<TechDebtItem>, isSuppress: Boolean = false) {
         table {
             thead {
                 tr {
                     th { +"Module" }
                     th { +"Symbol" }
-                    th { +"Description" }
-                    th { +"Ticket" }
-                    th { +"Priority" }
+                    th {
+                        if (isSuppress) {
+                            +"Rule"
+                        } else {
+                            +"Description"
+                        }
+                    }
+                    if (!isSuppress) {
+                        th { +"Ticket" }
+                        th { +"Priority" }
+                    }
                     th { +"Source Set" }
                 }
             }
@@ -104,12 +122,14 @@ internal class ConsolidatedHtmlReportGenerator {
                         td { +item.moduleName }
                         td { strong { +item.name } }
                         td { +item.description }
-                        td {
-                            if (item.ticket.isNotEmpty()) {
-                                span(classes = "ticket") { +item.ticket }
+                        if (!isSuppress) {
+                            td {
+                                if (item.ticket.isNotEmpty()) {
+                                    span(classes = "ticket") { +item.ticket }
+                                }
                             }
+                            td { +item.priority }
                         }
-                        td { +item.priority }
                         td { +item.sourceSet }
                     }
                 }

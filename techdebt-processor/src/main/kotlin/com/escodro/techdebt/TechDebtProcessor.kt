@@ -1,6 +1,7 @@
 package com.escodro.techdebt
 
 import com.escodro.techdebt.report.TechDebtItem
+import com.escodro.techdebt.report.TechDebtItemType
 import com.escodro.techdebt.report.json.TechDebtJsonReportGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
@@ -26,11 +27,22 @@ internal class TechDebtProcessor(
     private val jsonReportGenerator = TechDebtJsonReportGenerator()
     private val moduleName = environment.options["moduleName"] ?: "unknown"
     private val sourceSet = environment.options["sourceSet"] ?: "unknown"
+    private val collectSuppress = environment.options["collectSuppress"]?.toBoolean() ?: false
     private val allItems = mutableListOf<TechDebtItem>()
     private val allOriginatingFiles = mutableSetOf<KSFile>()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val unableToProcess = mutableListOf<KSAnnotated>()
+
+        processTechDebt(resolver, unableToProcess)
+        if (collectSuppress) {
+            processSuppress(resolver)
+        }
+
+        return unableToProcess
+    }
+
+    private fun processTechDebt(resolver: Resolver, unableToProcess: MutableList<KSAnnotated>) {
         resolver.getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!).forEach { symbol ->
             if (!symbol.validate()) {
                 unableToProcess.add(symbol)
@@ -55,13 +67,7 @@ internal class TechDebtProcessor(
                     else -> "NONE"
                 }
 
-            val name =
-                when (symbol) {
-                    is KSDeclaration ->
-                        symbol.qualifiedName?.asString() ?: symbol.simpleName.asString()
-                    is KSFile -> symbol.fileName
-                    else -> "unknown"
-                }
+            val name = getSymbolName(symbol)
 
             allItems.add(
                 TechDebtItem(
@@ -74,9 +80,53 @@ internal class TechDebtProcessor(
                 )
             )
         }
-
-        return unableToProcess
     }
+
+    private fun processSuppress(resolver: Resolver) {
+        resolver.getSymbolsWithAnnotation(Suppress::class.qualifiedName!!).forEach { symbol ->
+            if (!symbol.validate()) return@forEach
+
+            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
+            ksFile?.let { allOriginatingFiles.add(it) }
+
+            val annotation =
+                symbol.annotations.firstOrNull {
+                    it.annotationType.resolve().declaration.qualifiedName?.asString() ==
+                        Suppress::class.qualifiedName
+                } ?: return@forEach
+
+            val names = annotation.arguments.firstOrNull { it.name?.asString() == "names" }?.value
+            val ruleNames =
+                when (names) {
+                    is List<*> -> names.mapNotNull { it?.toString() }
+                    is Array<*> -> names.mapNotNull { it?.toString() }
+                    else -> emptyList()
+                }
+
+            val name = getSymbolName(symbol)
+
+            ruleNames.forEach { rule ->
+                allItems.add(
+                    TechDebtItem(
+                        moduleName = moduleName,
+                        name = name,
+                        description = rule,
+                        ticket = "",
+                        priority = "",
+                        sourceSet = sourceSet,
+                        type = TechDebtItemType.SUPPRESS
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getSymbolName(symbol: KSAnnotated): String =
+        when (symbol) {
+            is KSDeclaration -> symbol.qualifiedName?.asString() ?: symbol.simpleName.asString()
+            is KSFile -> symbol.fileName
+            else -> "unknown"
+        }
 
     @Suppress("SpreadOperator", "TooGenericExceptionCaught")
     override fun finish() {
