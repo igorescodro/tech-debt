@@ -89,18 +89,23 @@ internal class TechDebtProcessor(
             val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
             ksFile?.let { allOriginatingFiles.add(it) }
 
-            val annotation =
-                symbol.annotations.firstOrNull {
-                    it.annotationType.resolve().declaration.qualifiedName?.asString() ==
-                        Suppress::class.qualifiedName
-                } ?: return@forEach
-
-            val names = annotation.arguments.firstOrNull { it.name?.asString() == "names" }?.value
+            val suppressAnnotations =
+                symbol.annotations
+                    .filter {
+                        it.annotationType.resolve().declaration.qualifiedName?.asString() ==
+                            Suppress::class.qualifiedName
+                    }
+                    .toList()
+            if (suppressAnnotations.isEmpty()) return@forEach
             val ruleNames =
-                when (names) {
-                    is List<*> -> names.mapNotNull { it?.toString() }
-                    is Array<*> -> names.mapNotNull { it?.toString() }
-                    else -> emptyList()
+                suppressAnnotations.flatMap { annotation ->
+                    val namesArg =
+                        annotation.arguments.firstOrNull { it.name?.asString() == "names" }?.value
+                    when (namesArg) {
+                        is List<*> -> namesArg.mapNotNull { it?.toString() }
+                        is Array<*> -> namesArg.mapNotNull { it?.toString() }
+                        else -> emptyList()
+                    }
                 }
 
             val name = getSymbolName(symbol)
