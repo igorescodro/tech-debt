@@ -28,4 +28,9 @@ class Sample {
     fun legacyFunction() {
         println("Legacy logic")
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun suppressedFunction() {
+        println("Suppressed function")
+    }
 }

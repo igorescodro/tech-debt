@@ -15,6 +15,7 @@ class TechDebtPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension: TechDebtExtension =
             project.extensions.create("techDebtReport", TechDebtExtension::class.java)
+        extension.collectSuppress.convention(false)
 
         val reportTask: TaskProvider<GenerateTechDebtReportTask> =
             project.tasks.register(
@@ -45,7 +46,7 @@ class TechDebtPlugin : Plugin<Project> {
                 configureAndroidPlugins()
                 configureKmpPlugins()
                 configureJvmPlugins()
-                setupKspModules(reportTask)
+                setupKspModules(reportTask = reportTask, extension = extension)
             }
         }
     }
@@ -126,11 +127,19 @@ class TechDebtPlugin : Plugin<Project> {
      * generation.
      *
      * @param reportTask the task to configure the dependencies for
+     * @param extension the plugin extension
      */
-    private fun Project.setupKspModules(reportTask: TaskProvider<GenerateTechDebtReportTask>) {
+    private fun Project.setupKspModules(
+        reportTask: TaskProvider<GenerateTechDebtReportTask>,
+        extension: TechDebtExtension
+    ) {
         pluginManager.withPlugin(KSP_PLUGIN) {
             val kspExtension = extensions.getByType(KspExtension::class.java)
-            kspExtension.arg(KSP_ARG_MODULE_NAME, path)
+            kspExtension.arg(k = KSP_ARG_MODULE_NAME, v = path)
+            kspExtension.arg(
+                k = KSP_ARG_COLLECT_SUPPRESS,
+                v = extension.collectSuppress.map { it.toString() }
+            )
 
             reportTask.configure { task ->
                 task.dependsOn(tasks.matching { it.name.startsWith(KSP_PARAM) })
@@ -181,6 +190,7 @@ class TechDebtPlugin : Plugin<Project> {
         private const val COMMON_MAIN_IMPLEMENTATION = "commonMainImplementation"
         private const val VERSION_PROPERTY = "version"
         private const val KSP_ARG_MODULE_NAME = "moduleName"
+        private const val KSP_ARG_COLLECT_SUPPRESS = "collectSuppress"
         private const val KMP_METADATA_TARGET = "metadata"
     }
 }

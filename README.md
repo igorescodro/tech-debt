@@ -76,17 +76,22 @@ The consolidated HTML report will be generated in the root build directory:
 
 ## Configuration (Optional)
 
-You can customize the output file path in your root `build.gradle.kts`:
+You can customize the output file path and other options in your root `build.gradle.kts`:
 
 ```kotlin
 techDebtReport {
+    // Customize the output file path (Optional)
     outputFile.set(layout.buildDirectory.file("custom/path/report.html"))
+
+    // Enable the collection of @Suppress annotations (Optional, default is false)
+    collectSuppress.set(true)
 }
 ```
 
 ## Features
 
 - **Consolidated HTML Report**: A clean, easy-to-read summary of all technical debt from all modules in your project.
+- **Suppress Support**: Optionally collect and visualize suppressed rules (e.g., `@Suppress("MagicNumber")`) in the report.
 - **Priority Levels**: Support for `LOW`, `MEDIUM`, and `HIGH` priority levels (and `NONE`).
 - **Ticket Linking**: Keep track of related tickets in your issue tracking system.
 - **Multi-module Support**: Automatically collects data from all subprojects.

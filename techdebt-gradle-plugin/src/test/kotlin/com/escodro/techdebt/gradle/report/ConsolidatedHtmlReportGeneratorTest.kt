@@ -1,6 +1,7 @@
 package com.escodro.techdebt.gradle.report
 
 import com.escodro.techdebt.gradle.model.TechDebtItem
+import com.escodro.techdebt.gradle.model.TechDebtItemType
 import java.io.StringWriter
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -56,13 +57,43 @@ internal class ConsolidatedHtmlReportGeneratorTest {
         assertTrue(html.contains("HIGH"))
     }
 
-    private fun createItem(module: String, priority: String) =
+    @Test
+    fun `test generator creates HTML with suppressed rules section`() {
+        val items =
+            listOf(
+                createItem(module = "A", priority = "HIGH"),
+                createItem(
+                    module = "B",
+                    priority = "NONE",
+                    type = TechDebtItemType.SUPPRESS,
+                    description = "Rule1"
+                )
+            )
+
+        val writer = StringWriter()
+        generator.generate(writer, items)
+        val html = writer.toString()
+
+        assertTrue(html.contains("Annotated Tech Debt"))
+        assertTrue(html.contains("Suppressed Rules"))
+        assertTrue(html.contains("Rule1"))
+        // Suppressed item should not be counted in the summary
+        assertTrue(html.contains("<h2>1</h2>"), "Should contain only 1 in summary total")
+    }
+
+    private fun createItem(
+        module: String,
+        priority: String,
+        type: TechDebtItemType = TechDebtItemType.TECH_DEBT,
+        description: String = "description"
+    ) =
         TechDebtItem(
             moduleName = module,
             name = "name",
-            description = "description",
+            description = description,
             ticket = "ticket",
             priority = priority,
-            sourceSet = "main"
+            sourceSet = "main",
+            type = type
         )
 }

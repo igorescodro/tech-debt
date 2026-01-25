@@ -171,4 +171,64 @@ internal class TechDebtProcessorIntegrationTest {
         val content = jsonFile.readText()
         assertTrue(content.contains("\"moduleName\": \"unknown\""))
     }
+
+    @Test
+    fun `test if the processor collects suppressed rules when enabled`() {
+        val testProject = TestProject(tempDir)
+        testProject.setupBuild()
+        // Add collectSuppress arg correctly
+        File(tempDir, "build.gradle.kts")
+            .appendText(
+                """
+            
+            configure<com.google.devtools.ksp.gradle.KspExtension> {
+                arg("collectSuppress", "true")
+            }
+            """
+                    .trimIndent()
+            )
+        testProject.addSource(
+            "MyClass.kt",
+            """
+            package com.escodro.techdebt
+            
+            @Suppress("UnusedPrivateMember", "MagicNumber")
+            class MyClass {
+                @Suppress("Deprecation")
+                fun myFunc() {}
+            }
+            """
+                .trimIndent()
+        )
+
+        testProject.build()
+
+        val jsonFile = testProject.getJsonReportFile()
+        val content = jsonFile.readText()
+        assertTrue(content.contains("UnusedPrivateMember"))
+        assertTrue(content.contains("MagicNumber"))
+        assertTrue(content.contains("Deprecation"))
+        assertTrue(content.contains("\"type\": \"SUPPRESS\""))
+    }
+
+    @Test
+    fun `test if the processor does not collect suppressed rules by default`() {
+        val testProject = TestProject(tempDir)
+        testProject.setupBuild()
+        testProject.addSource(
+            "MyClass.kt",
+            """
+            package com.escodro.techdebt
+            
+            @Suppress("UnusedPrivateMember")
+            class MyClass
+            """
+                .trimIndent()
+        )
+
+        testProject.build()
+
+        val jsonFile = testProject.getJsonReportFile()
+        assertTrue(!jsonFile.exists() || !jsonFile.readText().contains("UnusedPrivateMember"))
+    }
 }
