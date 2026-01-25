@@ -535,6 +535,107 @@ internal class TechDebtPluginTest {
     }
 
     @Test
+    fun `test collectSuppress KSP argument is correctly set`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("org.jetbrains.kotlin.jvm") version "2.3.0"
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+            
+            techDebtReport {
+                collectSuppress.set(true)
+            }
+            
+            tasks.register("checkKspArgs") {
+                doLast {
+                    val ksp = project.extensions.findByName("ksp") as? com.google.devtools.ksp.gradle.KspExtension
+                    if (ksp == null) {
+                        throw GradleException("KSP extension not found")
+                    }
+                    val collectSuppress = ksp.arguments["collectSuppress"]
+                    if (collectSuppress != "true") {
+                        throw GradleException("collectSuppress KSP argument expected 'true' but was ${"$"}collectSuppress'")
+                    }
+                }
+            }
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("checkKspArgs")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspArgs")?.outcome)
+    }
+
+    @Test
+    fun `test generateTechDebtReport includes suppressed rules from JSON`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            techDebtReport {
+                collectSuppress.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Create a mock JSON file with a suppressed item
+        val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
+        kspDir.mkdirs()
+        File(kspDir, "report.json")
+            .writeText(
+                """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "com.example.MyClass",
+                    "description": "MagicNumber",
+                    "ticket": "",
+                    "priority": "",
+                    "sourceSet": "main",
+                    "type": "SUPPRESS"
+                }
+            ]
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists(), "Consolidated report should exist")
+
+        val content = reportFile.readText()
+        assertTrue(content.contains("Suppressed Rules"), "Report should contain Suppressed Rules section")
+        assertTrue(content.contains("MagicNumber"), "Report should contain the suppressed rule name")
+        assertTrue(content.contains("com.example.MyClass"), "Report should contain the class name")
+    }
+
+    @Test
     fun `test multiplatform aggregation`() {
         setupProject()
 
