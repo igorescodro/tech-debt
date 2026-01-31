@@ -16,12 +16,14 @@ class TechDebtPlugin : Plugin<Project> {
         val extension: TechDebtExtension =
             project.extensions.create("techDebtReport", TechDebtExtension::class.java)
         extension.collectSuppress.convention(false)
+        extension.collectComments.convention(false)
 
         val reportTask: TaskProvider<GenerateTechDebtReportTask> =
             project.tasks.register(
                 "generateTechDebtReport",
                 GenerateTechDebtReportTask::class.java
             ) { task ->
+                task.collectComments.set(extension.collectComments)
                 task.outputFile.set(
                     extension.outputFile.convention(
                         project.layout.buildDirectory.file(
@@ -36,6 +38,13 @@ class TechDebtPlugin : Plugin<Project> {
                         subproject.fileTree("build/generated/ksp").matching {
                             it.include("**/resources/techdebt/report.json")
                         }
+                    }
+                )
+
+                // Collect source files from all subprojects
+                task.sourceFiles.from(
+                    project.allprojects.map { subproject ->
+                        subproject.fileTree("src").matching { it.include("**/*.kt") }
                     }
                 )
             }

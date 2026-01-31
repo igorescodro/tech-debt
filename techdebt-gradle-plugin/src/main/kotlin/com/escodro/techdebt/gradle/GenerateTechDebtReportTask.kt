@@ -1,11 +1,14 @@
 package com.escodro.techdebt.gradle
 
 import com.escodro.techdebt.gradle.model.TechDebtItem
+import com.escodro.techdebt.gradle.model.TechDebtItemType
 import com.escodro.techdebt.gradle.report.ConsolidatedHtmlReportGenerator
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -16,12 +19,24 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
     /** The JSON files containing tech debt items from all modules. */
     @get:InputFiles abstract val jsonFiles: ConfigurableFileCollection
 
+    /** Whether to collect TODO/FIXME comments. Defaults to `false`. */
+    @get:Input abstract val collectComments: Property<Boolean>
+
+    /** The source files to scan for TODO comments. */
+    @get:InputFiles abstract val sourceFiles: ConfigurableFileCollection
+
     /** The output file for the consolidated HTML report. */
     @get:OutputFile abstract val outputFile: RegularFileProperty
 
     @TaskAction
     fun generate() {
-        val allItems = parseJsonFiles()
+        val allItems = mutableListOf<TechDebtItem>()
+        allItems += parseKspGeneratedFiles()
+
+        if (collectComments.get()) {
+            allItems += collectTodoComments()
+        }
+
         val aggregatedItems = aggregateItems(allItems)
 
         val sortedItems =
@@ -30,7 +45,7 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         writeReport(sortedItems)
     }
 
-    private fun parseJsonFiles(): List<TechDebtItem> {
+    private fun parseKspGeneratedFiles(): List<TechDebtItem> {
         val allItems = mutableListOf<TechDebtItem>()
         jsonFiles.files.forEach { file ->
             if (file.exists()) {
@@ -58,17 +73,48 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         }
     }
 
+    private fun collectTodoComments(): List<TechDebtItem> {
+        val items = mutableListOf<TechDebtItem>()
+        val todoCommentPattern =
+            Regex("""^\s*(?://|/\*\*?|\*)\s*(TODO|FIXME)\b[:\s]?(.*?)(?:\s*\*+/)?\s*$""")
+
+        sourceFiles.files.forEach { file ->
+            val subproject =
+                project.allprojects.find { file.startsWith(it.projectDir) } ?: return@forEach
+            file.readLines(Charsets.UTF_8).forEachIndexed { index, line ->
+                val matchResult = todoCommentPattern.find(line)
+                if (matchResult != null) {
+                    val type = matchResult.groupValues[1]
+                    val content = matchResult.groupValues[2].trim()
+                    val description = if (content.isEmpty()) type else "$type: $content"
+
+                    val relativePath = file.relativeTo(subproject.projectDir).path
+                    items +=
+                        TechDebtItem(
+                            moduleName = subproject.path,
+                            sourceSet = "$relativePath:${index + 1}",
+                            name = "",
+                            description = description,
+                            ticket = "",
+                            priority = "",
+                            type = TechDebtItemType.COMMENT
+                        )
+                }
+            }
+        }
+
+        return items
+    }
+
     private fun aggregateItems(items: List<TechDebtItem>): List<TechDebtItem> =
         items
             .groupBy {
-                // Group by all fields except sourceSet
                 listOf(it.moduleName, it.name, it.description, it.ticket, it.priority, it.type)
             }
             .map { (_, group) ->
                 val first = group.first()
                 val sourceSets = group.map { it.sourceSet }.toSet()
-                val consolidatedSourceSet = sourceSets.sorted().joinToString(", ")
-                first.copy(sourceSet = consolidatedSourceSet)
+                first.copy(sourceSet = sourceSets.sorted().joinToString(", "))
             }
 
     private fun writeReport(items: List<TechDebtItem>) {

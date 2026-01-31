@@ -14,4 +14,7 @@ abstract class TechDebtExtension {
 
     /** Whether to collect suppressed rules from `@Suppress` annotations. Defaults to `false`. */
     abstract val collectSuppress: Property<Boolean>
+
+    /** Whether to collect TODO/FIXME comments. Defaults to `false`. */
+    abstract val collectComments: Property<Boolean>
 }

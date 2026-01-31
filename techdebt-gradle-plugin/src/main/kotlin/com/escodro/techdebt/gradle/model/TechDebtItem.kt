@@ -52,5 +52,8 @@ enum class TechDebtItemType {
     TECH_DEBT,
 
     /** Item collected from @Suppress annotation. */
-    SUPPRESS
+    SUPPRESS,
+
+    /** Item collected from TODO/FIXME comments. */
+    COMMENT
 }
