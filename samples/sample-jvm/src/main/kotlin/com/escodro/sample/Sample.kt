@@ -5,21 +5,17 @@ package com.escodro.sample
 import com.escodro.techdebt.Priority
 import com.escodro.techdebt.TechDebt
 
-@TechDebt(ticket = "TD-1", description = "This class needs a better name", priority = Priority.LOW)
+@TechDebt(ticket = "20", description = "This class needs a better name", priority = Priority.LOW)
 class Sample {
 
     @TechDebt(
-        ticket = "TD-2",
+        ticket = "23",
         description = "This property should be private",
         priority = Priority.MEDIUM
     )
     val someProperty: String = "Hello"
 
-    @TechDebt(
-        ticket = "TD-3",
-        description = "This function is too complex",
-        priority = Priority.HIGH
-    )
+    @TechDebt(ticket = "26", description = "This function is too complex", priority = Priority.HIGH)
     fun someComplexFunction() {
         // TODO Refactor function when code is ready
         println("Doing something complex")
