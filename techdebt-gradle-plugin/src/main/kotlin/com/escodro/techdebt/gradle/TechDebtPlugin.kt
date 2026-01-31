@@ -41,10 +41,16 @@ class TechDebtPlugin : Plugin<Project> {
                     }
                 )
 
-                // Collect source files from all subprojects
+                // Collect source files from all subprojects if collectComments is enabled
                 task.sourceFiles.from(
-                    project.allprojects.map { subproject ->
-                        subproject.fileTree("src").matching { it.include("**/*.kt") }
+                    extension.collectComments.map { enabled ->
+                        if (enabled) {
+                            project.allprojects.map { subproject ->
+                                subproject.fileTree("src").matching { it.include("**/*.kt") }
+                            }
+                        } else {
+                            emptyList<Any>()
+                        }
                     }
                 )
             }

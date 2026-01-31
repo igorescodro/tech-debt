@@ -1154,6 +1154,86 @@ internal class TechDebtPluginTest {
         assertTrue(!content.contains("TODO Comments"))
     }
 
+    @Test
+    fun `test source files do not trigger re-execution when collectComments is disabled`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            techDebtReport {
+                collectComments.set(false)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Initial run
+        val runner =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+
+        val firstResult = runner.build()
+        assertEquals(TaskOutcome.SUCCESS, firstResult.task(":generateTechDebtReport")?.outcome)
+
+        // Modify a source file
+        val srcDir = File(tempDir, "src/main/kotlin/com/example")
+        srcDir.mkdirs()
+        File(srcDir, "MyClass.kt")
+            .writeText(
+                """
+            package com.example
+            // Some change
+            class MyClass
+            """
+                    .trimIndent()
+            )
+
+        // Second run - should be UP-TO-DATE because sourceFiles are not inputs
+        val secondResult = runner.build()
+        assertEquals(TaskOutcome.UP_TO_DATE, secondResult.task(":generateTechDebtReport")?.outcome)
+
+        // Enable collectComments
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            techDebtReport {
+                collectComments.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Third run - should be SUCCESS because collectComments changed
+        val thirdResult = runner.build()
+        assertEquals(TaskOutcome.SUCCESS, thirdResult.task(":generateTechDebtReport")?.outcome)
+
+        // Modify source file again
+        File(srcDir, "MyClass.kt")
+            .writeText(
+                """
+            package com.example
+            // Another change
+            // TODO: Now I am an input
+            class MyClass
+            """
+                    .trimIndent()
+            )
+
+        // Fourth run - should be SUCCESS (not UP-TO-DATE) because sourceFiles are now inputs
+        val fourthResult = runner.build()
+        assertEquals(TaskOutcome.SUCCESS, fourthResult.task(":generateTechDebtReport")?.outcome)
+    }
+
     private fun setupProject() {
         File(tempDir, "settings.gradle.kts")
             .writeText(
