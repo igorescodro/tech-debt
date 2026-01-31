@@ -38,7 +38,6 @@ internal class TechDebtProcessor(
         if (collectSuppress) {
             processSuppress(resolver)
         }
-
         return unableToProcess
     }
 

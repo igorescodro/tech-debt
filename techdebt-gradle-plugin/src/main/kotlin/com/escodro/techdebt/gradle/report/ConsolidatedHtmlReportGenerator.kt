@@ -34,6 +34,7 @@ internal class ConsolidatedHtmlReportGenerator {
     fun generate(writer: Writer, items: List<TechDebtItem>) {
         val techDebtItems = items.filter { it.type == TechDebtItemType.TECH_DEBT }
         val suppressedItems = items.filter { it.type == TechDebtItemType.SUPPRESS }
+        val commentItems = items.filter { it.type == TechDebtItemType.COMMENT }
 
         val totalItems = techDebtItems.size
         val highItems = techDebtItems.count { it.priority == "HIGH" }
@@ -56,6 +57,11 @@ internal class ConsolidatedHtmlReportGenerator {
 
                 h2 { +"Annotated Tech Debt" }
                 table(items = techDebtItems)
+
+                if (commentItems.isNotEmpty()) {
+                    h2 { +"Comments" }
+                    table(items = commentItems, isComment = true)
+                }
 
                 if (suppressedItems.isNotEmpty()) {
                     h2 { +"Suppressed Rules" }
@@ -96,33 +102,48 @@ internal class ConsolidatedHtmlReportGenerator {
         }
     }
 
-    private fun BODY.table(items: List<TechDebtItem>, isSuppress: Boolean = false) {
+    private fun BODY.table(
+        items: List<TechDebtItem>,
+        isSuppress: Boolean = false,
+        isComment: Boolean = false
+    ) {
         table {
             thead {
                 tr {
                     th { +"Module" }
-                    th { +"Symbol" }
+                    if (!isComment) {
+                        th { +"Symbol" }
+                    }
                     th {
-                        if (isSuppress) {
-                            +"Rule"
-                        } else {
-                            +"Description"
+                        when {
+                            isSuppress -> +"Rule"
+                            isComment -> +"Comment"
+                            else -> +"Description"
                         }
                     }
-                    if (!isSuppress) {
+                    if (!isSuppress && !isComment) {
                         th { +"Ticket" }
                         th { +"Priority" }
                     }
-                    th { +"Source Set" }
+
+                    th {
+                        if (isComment) {
+                            +"Location"
+                        } else {
+                            +"Source Set"
+                        }
+                    }
                 }
             }
             tbody {
                 for (item in items) {
                     tr {
                         td { +item.moduleName }
-                        td { strong { +item.name } }
+                        if (!isComment) {
+                            td { strong { +item.name } }
+                        }
                         td { +item.description }
-                        if (!isSuppress) {
+                        if (!isSuppress && !isComment) {
                             td {
                                 if (item.ticket.isNotEmpty()) {
                                     span(classes = "ticket") { +item.ticket }
