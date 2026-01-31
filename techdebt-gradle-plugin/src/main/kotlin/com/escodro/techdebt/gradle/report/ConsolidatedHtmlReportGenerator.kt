@@ -188,7 +188,10 @@ internal class ConsolidatedHtmlReportGenerator {
                 } else {
                     "$baseTicketUrl/$ticket"
                 }
-            a(href = url, target = "_blank") { +ticket }
+            a(href = url, target = "_blank") {
+                rel = "noopener noreferrer"
+                +ticket
+            }
         } else {
             span(classes = "ticket") { +ticket }
         }
