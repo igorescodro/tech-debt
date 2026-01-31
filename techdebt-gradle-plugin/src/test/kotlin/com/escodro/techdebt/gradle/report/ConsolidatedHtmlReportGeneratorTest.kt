@@ -81,6 +81,58 @@ internal class ConsolidatedHtmlReportGeneratorTest {
         assertTrue(html.contains("<h2>1</h2>"), "Should contain only 1 in summary total")
     }
 
+    @Test
+    fun `test generator creates link when base ticket URL is provided`() {
+        val items =
+            listOf(
+                TechDebtItem(
+                    moduleName = ":my-module",
+                    name = "MyClass",
+                    description = "Fix this later",
+                    ticket = "PROJ-456",
+                    priority = "HIGH",
+                    sourceSet = "main"
+                )
+            )
+
+        val writer = StringWriter()
+        generator.generate(writer, items, baseTicketUrl = "https://jira.myproject.com/tickets/")
+        val html = writer.toString()
+
+        assertTrue(
+            html.contains(
+                "<a href=\"https://jira.myproject.com/tickets/PROJ-456\" target=\"_blank\">PROJ-456</a>"
+            ),
+            "Should contain the ticket as a link"
+        )
+    }
+
+    @Test
+    fun `test generator creates link when base ticket URL is provided without trailing slash`() {
+        val items =
+            listOf(
+                TechDebtItem(
+                    moduleName = ":my-module",
+                    name = "MyClass",
+                    description = "Fix this later",
+                    ticket = "PROJ-456",
+                    priority = "HIGH",
+                    sourceSet = "main"
+                )
+            )
+
+        val writer = StringWriter()
+        generator.generate(writer, items, baseTicketUrl = "https://jira.myproject.com/tickets")
+        val html = writer.toString()
+
+        assertTrue(
+            html.contains(
+                "<a href=\"https://jira.myproject.com/tickets/PROJ-456\" target=\"_blank\">PROJ-456</a>"
+            ),
+            "Should contain the ticket as a link even without trailing slash in base URL"
+        )
+    }
+
     private fun createItem(
         module: String,
         priority: String,

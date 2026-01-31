@@ -86,6 +86,57 @@ internal class TechDebtPluginTest {
     }
 
     @Test
+    fun `test baseTicketUrl generates links in the report`() {
+        setupProject(
+            extraConfig =
+                """
+            techDebtReport {
+                baseTicketUrl = "https://jira.myproject.com/tickets/"
+            }
+        """
+        )
+
+        // Create a mock JSON file
+        val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
+        kspDir.mkdirs()
+        File(kspDir, "report.json")
+            .writeText(
+                """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "com.example.MyClass",
+                    "description": "Test debt",
+                    "ticket": "JIRA-123",
+                    "priority": "HIGH",
+                    "sourceSet": "main"
+                }
+            ]
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        val content = reportFile.readText()
+
+        assertTrue(
+            content.contains(
+                "<a href=\"https://jira.myproject.com/tickets/JIRA-123\" target=\"_blank\">JIRA-123</a>"
+            ),
+            "Report should contain a link to the ticket"
+        )
+    }
+
+    @Test
     fun `test report contains items from multiple modules`() {
         setupProject()
 
@@ -1234,7 +1285,7 @@ internal class TechDebtPluginTest {
         assertEquals(TaskOutcome.SUCCESS, fourthResult.task(":generateTechDebtReport")?.outcome)
     }
 
-    private fun setupProject() {
+    private fun setupProject(extraConfig: String = "") {
         File(tempDir, "settings.gradle.kts")
             .writeText(
                 """
@@ -1249,6 +1300,7 @@ internal class TechDebtPluginTest {
             plugins {
                 id("io.github.igorescodro.techdebt")
             }
+            $extraConfig
             """
                     .trimIndent()
             )
