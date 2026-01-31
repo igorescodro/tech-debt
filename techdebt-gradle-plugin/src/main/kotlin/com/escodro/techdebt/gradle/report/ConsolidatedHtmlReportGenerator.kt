@@ -4,6 +4,9 @@ import com.escodro.techdebt.gradle.model.TechDebtItem
 import com.escodro.techdebt.gradle.model.TechDebtItemType
 import java.io.Writer
 import kotlinx.html.BODY
+import kotlinx.html.TBODY
+import kotlinx.html.TD
+import kotlinx.html.THEAD
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
@@ -111,63 +114,83 @@ internal class ConsolidatedHtmlReportGenerator {
         baseTicketUrl: String? = null
     ) {
         table {
-            thead {
-                tr {
-                    th { +"Module" }
-                    if (!isComment) {
-                        th { +"Symbol" }
-                    }
-                    th {
-                        when {
-                            isSuppress -> +"Rule"
-                            isComment -> +"Comment"
-                            else -> +"Description"
-                        }
-                    }
-                    if (!isSuppress && !isComment) {
-                        th { +"Ticket" }
-                        th { +"Priority" }
-                    }
-
-                    th {
-                        if (isComment) {
-                            +"Location"
-                        } else {
-                            +"Source Set"
-                        }
-                    }
-                }
-            }
+            thead { tableHeader(isSuppress = isSuppress, isComment = isComment) }
             tbody {
                 for (item in items) {
-                    tr {
-                        td { +item.moduleName }
-                        if (!isComment) {
-                            td { strong { +item.name } }
-                        }
-                        td { +item.description }
-                        if (!isSuppress && !isComment) {
-                            td {
-                                if (item.ticket.isNotEmpty()) {
-                                    if (baseTicketUrl != null) {
-                                        val url =
-                                            if (baseTicketUrl.endsWith("/")) {
-                                                "$baseTicketUrl${item.ticket}"
-                                            } else {
-                                                "$baseTicketUrl/${item.ticket}"
-                                            }
-                                        a(href = url, target = "_blank") { +item.ticket }
-                                    } else {
-                                        span(classes = "ticket") { +item.ticket }
-                                    }
-                                }
-                            }
-                            td { +item.priority }
-                        }
-                        td { +item.sourceSet }
-                    }
+                    tableRow(
+                        item = item,
+                        isSuppress = isSuppress,
+                        isComment = isComment,
+                        baseTicketUrl = baseTicketUrl
+                    )
                 }
             }
+        }
+    }
+
+    private fun THEAD.tableHeader(isSuppress: Boolean, isComment: Boolean) {
+        tr {
+            th { +"Module" }
+            if (!isComment) {
+                th { +"Symbol" }
+            }
+            th {
+                when {
+                    isSuppress -> +"Rule"
+                    isComment -> +"Comment"
+                    else -> +"Description"
+                }
+            }
+            if (!isSuppress && !isComment) {
+                th { +"Ticket" }
+                th { +"Priority" }
+            }
+
+            th {
+                if (isComment) {
+                    +"Location"
+                } else {
+                    +"Source Set"
+                }
+            }
+        }
+    }
+
+    private fun TBODY.tableRow(
+        item: TechDebtItem,
+        isSuppress: Boolean,
+        isComment: Boolean,
+        baseTicketUrl: String?
+    ) {
+        tr {
+            td { +item.moduleName }
+            if (!isComment) {
+                td { strong { +item.name } }
+            }
+            td { +item.description }
+            if (!isSuppress && !isComment) {
+                td {
+                    if (item.ticket.isNotEmpty()) {
+                        ticket(ticket = item.ticket, baseTicketUrl = baseTicketUrl)
+                    }
+                }
+                td { +item.priority }
+            }
+            td { +item.sourceSet }
+        }
+    }
+
+    private fun TD.ticket(ticket: String, baseTicketUrl: String?) {
+        if (baseTicketUrl != null) {
+            val url =
+                if (baseTicketUrl.endsWith("/")) {
+                    "$baseTicketUrl$ticket"
+                } else {
+                    "$baseTicketUrl/$ticket"
+                }
+            a(href = url, target = "_blank") { +ticket }
+        } else {
+            span(classes = "ticket") { +ticket }
         }
     }
 }
