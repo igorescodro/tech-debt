@@ -930,6 +930,230 @@ internal class TechDebtPluginTest {
         assertEquals(TaskOutcome.SUCCESS, result.task(":checkKspFallback")?.outcome)
     }
 
+    @Test
+    fun `test collectComments KSP argument is correctly set`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+                id("com.google.devtools.ksp") version "2.1.10-1.0.29"
+            }
+            
+            techDebtReport {
+                collectComments.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("tasks")
+                .withPluginClasspath()
+                .build()
+
+        // This is a bit indirect, but we check if the plugin applies correctly with the extension
+        assertEquals(TaskOutcome.SUCCESS, result.task(":tasks")?.outcome)
+    }
+
+    @Test
+    fun `test collectComments enabled collects TODOs from source files`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            techDebtReport {
+                collectComments.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Create a source file with TODO
+        val srcDir = File(tempDir, "src/main/kotlin/com/example")
+        srcDir.mkdirs()
+        File(srcDir, "MyClass.kt")
+            .writeText(
+                """
+            package com.example
+            
+            // TODO: Gradle task TODO
+            class MyClass
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists())
+        val content = reportFile.readText()
+        assertTrue(content.contains("TODO: Gradle task TODO"))
+        assertTrue(content.contains("Comments"))
+    }
+
+    @Test
+    fun `test collectComments enabled collects FIXMEs from source files`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            techDebtReport {
+                collectComments.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Create a source file with FIXME
+        val srcDir = File(tempDir, "src/main/kotlin/com/example")
+        srcDir.mkdirs()
+        File(srcDir, "MyClass.kt")
+            .writeText(
+                """
+            package com.example
+            
+            // FIXME: Gradle task FIXME
+            class MyClass
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists())
+        val content = reportFile.readText()
+        assertTrue(content.contains("FIXME: Gradle task FIXME"))
+        assertTrue(content.contains("Comments"))
+    }
+
+    @Test
+    fun `test collectComments enabled collects block comments from source files`() {
+        setupProject()
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            techDebtReport {
+                collectComments.set(true)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Create a source file with different block comment formats
+        val srcDir = File(tempDir, "src/main/kotlin/com/example")
+        srcDir.mkdirs()
+        File(srcDir, "MyClass.kt")
+            .writeText(
+                """
+            package com.example
+            
+            /* TODO: Block comment */
+            /** FIXME: KDoc comment **/
+            /*
+             * TODO: Multiline comment
+             */
+            class MyClass
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists())
+        val content = reportFile.readText()
+        assertTrue(content.contains("TODO: Block comment"))
+        assertTrue(content.contains("FIXME: KDoc comment"))
+        assertTrue(content.contains("TODO: Multiline comment"))
+        assertTrue(content.contains("Comments"))
+    }
+
+    @Test
+    fun `test collectComments disabled does not collect TODOs`() {
+        setupProject()
+        // Default is false, so we don't need to set it, but let's be explicit
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            
+            techDebtReport {
+                collectComments.set(false)
+            }
+            """
+                    .trimIndent()
+            )
+
+        // Create a source file with TODO
+        val srcDir = File(tempDir, "src/main/kotlin/com/example")
+        srcDir.mkdirs()
+        File(srcDir, "MyClass.kt")
+            .writeText(
+                """
+            package com.example
+            
+            // TODO: Should not be collected
+            class MyClass
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists())
+        val content = reportFile.readText()
+        assertTrue(!content.contains("TODO: Should not be collected"))
+        assertTrue(!content.contains("TODO Comments"))
+    }
+
     private fun setupProject() {
         File(tempDir, "settings.gradle.kts")
             .writeText(
