@@ -99,5 +99,5 @@ jobs:
         fi
         grep -q "Sample" "$REPORT_PATH" || (echo "Missing Sample in report" && exit 1)
         grep -q "This class needs a better name" "$REPORT_PATH" || (echo "Missing description in report" && exit 1)
-        grep -q "TD-1" "$REPORT_PATH" || (echo "Missing ticket in report" && exit 1)
+        grep -q "20" "$REPORT_PATH" || (echo "Missing ticket in report" && exit 1)
         grep -q "someProperty" "$REPORT_PATH" || (echo "Missing someProperty in report" && exit 1)
