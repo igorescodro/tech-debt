@@ -101,9 +101,10 @@ internal class ConsolidatedHtmlReportGeneratorTest {
 
         assertTrue(
             html.contains(
-                "<a href=\"https://jira.myproject.com/tickets/PROJ-456\" target=\"_blank\">PROJ-456</a>"
+                "<a href=\"https://jira.myproject.com/tickets/PROJ-456\" " +
+                    "target=\"_blank\" rel=\"noopener noreferrer\">PROJ-456</a>"
             ),
-            "Should contain the ticket as a link"
+            "Should contain the ticket as a link with rel=\"noopener noreferrer\""
         )
     }
 
@@ -127,9 +128,11 @@ internal class ConsolidatedHtmlReportGeneratorTest {
 
         assertTrue(
             html.contains(
-                "<a href=\"https://jira.myproject.com/tickets/PROJ-456\" target=\"_blank\">PROJ-456</a>"
+                "<a href=\"https://jira.myproject.com/tickets/PROJ-456\" " +
+                    "target=\"_blank\" rel=\"noopener noreferrer\">PROJ-456</a>"
             ),
-            "Should contain the ticket as a link even without trailing slash in base URL"
+            "Should contain the ticket as a link even without trailing slash in base URL and " +
+                "with rel=\"noopener noreferrer\""
         )
     }
 

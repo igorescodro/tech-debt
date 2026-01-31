@@ -130,7 +130,8 @@ internal class TechDebtPluginTest {
 
         assertTrue(
             content.contains(
-                "<a href=\"https://jira.myproject.com/tickets/JIRA-123\" target=\"_blank\">JIRA-123</a>"
+                "<a href=\"https://jira.myproject.com/tickets/JIRA-123\" target=\"_blank\" " +
+                    "rel=\"noopener noreferrer\">JIRA-123</a>"
             ),
             "Report should contain a link to the ticket"
         )
