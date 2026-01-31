@@ -88,6 +88,9 @@ techDebtReport {
 
     // Enable the collection of TODO and FIXME comments (Optional, default is false)
     collectComments.set(true)
+
+    // Set a base URL for tickets to automatically generate links (Optional)
+    baseTicketUrl.set("https://jira.myproject.com/tickets/")
 }
 ```
 
@@ -97,7 +100,8 @@ techDebtReport {
 - **Suppress Support**: Optionally collect and visualize suppressed rules (e.g., `@Suppress("MagicNumber")`) in the report.
 - **TODO/FIXME Comments Support**: Optionally collect and visualize `TODO` and `FIXME` comments from your source code.
 - **Priority Levels**: Support for `LOW`, `MEDIUM`, and `HIGH` priority levels (and `NONE`).
-- **Ticket Linking**: Keep track of related tickets in your issue tracking system.
+- **Ticket Linking**: Keep track of related tickets in your issue tracking system. If `baseTicketUrl` is configured, 
+tickets will automatically become clickable links in the report.
 - **Multi-module Support**: Automatically collects data from all subprojects.
 
 ## License
