@@ -10,6 +10,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
@@ -23,7 +24,7 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
     @get:Input abstract val collectComments: Property<Boolean>
 
     /** The source files to scan for TODO comments. */
-    @get:InputFiles abstract val sourceFiles: ConfigurableFileCollection
+    @get:InputFiles @get:Optional abstract val sourceFiles: ConfigurableFileCollection
 
     /** The output file for the consolidated HTML report. */
     @get:OutputFile abstract val outputFile: RegularFileProperty
