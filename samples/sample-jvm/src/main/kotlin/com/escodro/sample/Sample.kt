@@ -21,16 +21,26 @@ class Sample {
         priority = Priority.HIGH
     )
     fun someComplexFunction() {
+        // TODO Refactor function when code is ready
         println("Doing something complex")
     }
 
     @TechDebt(description = "Legacy code, handle with care")
     fun legacyFunction() {
         println("Legacy logic")
+        /* TODO Break legacy function */
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun suppressedFunction() {
         println("Suppressed function")
+    }
+
+    /** TODO Simplify this function */
+    fun normalFunction() {
+        println("Normal function")
+        /*
+         * TODO reduce function complexity
+         */
     }
 }

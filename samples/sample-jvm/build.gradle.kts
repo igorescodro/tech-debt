@@ -15,4 +15,5 @@ kotlin {
 techDebtReport {
     outputFile.set(layout.projectDirectory.file("assets/report.html"))
     collectSuppress.set(true)
+    collectComments.set(true)
 }
