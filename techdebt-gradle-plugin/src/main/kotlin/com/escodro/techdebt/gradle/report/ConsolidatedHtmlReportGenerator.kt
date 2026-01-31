@@ -4,6 +4,7 @@ import com.escodro.techdebt.gradle.model.TechDebtItem
 import com.escodro.techdebt.gradle.model.TechDebtItemType
 import java.io.Writer
 import kotlinx.html.BODY
+import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.h1
@@ -30,8 +31,9 @@ internal class ConsolidatedHtmlReportGenerator {
      *
      * @param writer the writer to output the HTML content
      * @param items the list of tech debt items to include in the report
+     * @param baseTicketUrl the base URL for the tickets
      */
-    fun generate(writer: Writer, items: List<TechDebtItem>) {
+    fun generate(writer: Writer, items: List<TechDebtItem>, baseTicketUrl: String? = null) {
         val techDebtItems = items.filter { it.type == TechDebtItemType.TECH_DEBT }
         val suppressedItems = items.filter { it.type == TechDebtItemType.SUPPRESS }
         val commentItems = items.filter { it.type == TechDebtItemType.COMMENT }
@@ -56,16 +58,16 @@ internal class ConsolidatedHtmlReportGenerator {
                 )
 
                 h2 { +"Annotated Tech Debt" }
-                table(items = techDebtItems)
+                table(items = techDebtItems, baseTicketUrl = baseTicketUrl)
 
                 if (commentItems.isNotEmpty()) {
                     h2 { +"Comments" }
-                    table(items = commentItems, isComment = true)
+                    table(items = commentItems, isComment = true, baseTicketUrl = baseTicketUrl)
                 }
 
                 if (suppressedItems.isNotEmpty()) {
                     h2 { +"Suppressed Rules" }
-                    table(items = suppressedItems, isSuppress = true)
+                    table(items = suppressedItems, isSuppress = true, baseTicketUrl = baseTicketUrl)
                 }
             }
         }
@@ -105,7 +107,8 @@ internal class ConsolidatedHtmlReportGenerator {
     private fun BODY.table(
         items: List<TechDebtItem>,
         isSuppress: Boolean = false,
-        isComment: Boolean = false
+        isComment: Boolean = false,
+        baseTicketUrl: String? = null
     ) {
         table {
             thead {
@@ -146,7 +149,17 @@ internal class ConsolidatedHtmlReportGenerator {
                         if (!isSuppress && !isComment) {
                             td {
                                 if (item.ticket.isNotEmpty()) {
-                                    span(classes = "ticket") { +item.ticket }
+                                    if (baseTicketUrl != null) {
+                                        val url =
+                                            if (baseTicketUrl.endsWith("/")) {
+                                                "$baseTicketUrl${item.ticket}"
+                                            } else {
+                                                "$baseTicketUrl/${item.ticket}"
+                                            }
+                                        a(href = url, target = "_blank") { +item.ticket }
+                                    } else {
+                                        span(classes = "ticket") { +item.ticket }
+                                    }
                                 }
                             }
                             td { +item.priority }

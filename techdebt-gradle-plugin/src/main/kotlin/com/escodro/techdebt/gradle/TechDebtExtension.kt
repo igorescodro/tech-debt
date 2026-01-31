@@ -17,4 +17,9 @@ abstract class TechDebtExtension {
 
     /** Whether to collect TODO/FIXME comments. Defaults to `false`. */
     abstract val collectComments: Property<Boolean>
+
+    /**
+     * The base URL for the tickets. If set, the ticket property in the HTML report will be a link.
+     */
+    abstract val baseTicketUrl: Property<String>
 }
