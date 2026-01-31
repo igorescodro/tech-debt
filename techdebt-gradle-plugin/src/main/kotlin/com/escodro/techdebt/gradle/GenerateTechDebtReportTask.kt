@@ -34,6 +34,11 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
     /** The source files to scan for TODO comments. */
     @get:InputFiles @get:Optional abstract val sourceFiles: ConfigurableFileCollection
 
+    /**
+     * The base URL for the tickets. If set, the ticket property in the HTML report will be a link.
+     */
+    @get:Input @get:Optional abstract val baseTicketUrl: Property<String>
+
     /** The output file for the consolidated HTML report. */
     @get:OutputFile abstract val outputFile: RegularFileProperty
 
@@ -137,7 +142,8 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         outputFile.parentFile.mkdirs()
 
         outputFile.bufferedWriter().use { writer ->
-            ConsolidatedHtmlReportGenerator().generate(writer, items)
+            ConsolidatedHtmlReportGenerator()
+                .generate(writer = writer, items = items, baseTicketUrl = baseTicketUrl.orNull)
         }
 
         logger.lifecycle("Tech Debt Report generated: file://${outputFile.absolutePath}")
