@@ -3,10 +3,12 @@ package com.escodro.techdebt.gradle
 import com.escodro.techdebt.gradle.model.TechDebtItem
 import com.escodro.techdebt.gradle.model.TechDebtItemType
 import com.escodro.techdebt.gradle.report.ConsolidatedHtmlReportGenerator
+import java.io.File
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -22,6 +24,12 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
 
     /** Whether to collect TODO/FIXME comments. Defaults to `false`. */
     @get:Input abstract val collectComments: Property<Boolean>
+
+    /**
+     * Map of project directory to project path. Used to resolve the module name for TODO comments
+     * without accessing the Project object at execution time.
+     */
+    @get:Input abstract val projectPathByDirectory: MapProperty<String, String>
 
     /** The source files to scan for TODO comments. */
     @get:InputFiles @get:Optional abstract val sourceFiles: ConfigurableFileCollection
@@ -79,9 +87,15 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         val todoCommentPattern =
             Regex("""^\s*(?://|/\*\*?|\*)\s*(TODO|FIXME)\b[:\s]?(.*?)(?:\s*\*+/)?\s*$""")
 
+        val projectPaths = projectPathByDirectory.get()
+
         sourceFiles.files.forEach { file ->
-            val subproject =
-                project.allprojects.find { file.startsWith(it.projectDir) } ?: return@forEach
+            val projectDir =
+                projectPaths.keys
+                    .filter { File(file.absolutePath).startsWith(File(it)) }
+                    .maxByOrNull { it.length } ?: return@forEach
+            val projectPath = projectPaths[projectDir] ?: return@forEach
+
             file.readLines(Charsets.UTF_8).forEachIndexed { index, line ->
                 val matchResult = todoCommentPattern.find(line)
                 if (matchResult != null) {
@@ -89,10 +103,10 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
                     val content = matchResult.groupValues[2].trim()
                     val description = if (content.isEmpty()) type else "$type: $content"
 
-                    val relativePath = file.relativeTo(subproject.projectDir).path
+                    val relativePath = file.relativeTo(File(projectDir)).invariantSeparatorsPath
                     items +=
                         TechDebtItem(
-                            moduleName = subproject.path,
+                            moduleName = projectPath,
                             sourceSet = "$relativePath:${index + 1}",
                             name = "",
                             description = description,

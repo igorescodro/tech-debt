@@ -1253,4 +1253,78 @@ internal class TechDebtPluginTest {
                     .trimIndent()
             )
     }
+
+    @Test
+    fun `test collectComments correctly identifies module name in multi-project setup`() {
+        val libDir = File(tempDir, "mylibrary")
+        libDir.mkdirs()
+        File(tempDir, "settings.gradle.kts")
+            .writeText(
+                """
+            rootProject.name = "root"
+            include(":mylibrary")
+        """
+                    .trimIndent()
+            )
+
+        File(tempDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                id("io.github.igorescodro.techdebt")
+            }
+            allprojects {
+                repositories {
+                    mavenCentral()
+                    google()
+                    mavenLocal()
+                }
+            }
+            techDebtReport {
+                collectComments.set(true)
+            }
+        """
+                    .trimIndent()
+            )
+
+        File(libDir, "build.gradle.kts")
+            .writeText(
+                """
+            plugins {
+                kotlin("jvm")
+                id("io.github.igorescodro.techdebt")
+            }
+        """
+                    .trimIndent()
+            )
+
+        // Create a source file in the library
+        val srcDir = File(libDir, "src/main/kotlin/com/example")
+        srcDir.mkdirs()
+        File(srcDir, "LibClass.kt")
+            .writeText(
+                """
+            package com.example
+            // TODO: Lib TODO
+            class LibClass
+        """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        assertTrue(reportFile.exists())
+        val content = reportFile.readText()
+        assertTrue(content.contains("TODO: Lib TODO"))
+        // It should contain the project path ":mylibrary"
+        assertTrue(content.contains(":mylibrary"))
+    }
 }

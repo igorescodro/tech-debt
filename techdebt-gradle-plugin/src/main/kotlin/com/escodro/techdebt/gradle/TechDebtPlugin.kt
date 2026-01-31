@@ -24,6 +24,9 @@ class TechDebtPlugin : Plugin<Project> {
                 GenerateTechDebtReportTask::class.java
             ) { task ->
                 task.collectComments.set(extension.collectComments)
+                task.projectPathByDirectory.set(
+                    project.allprojects.associate { it.projectDir.absolutePath to it.path }
+                )
                 task.outputFile.set(
                     extension.outputFile.convention(
                         project.layout.buildDirectory.file(
