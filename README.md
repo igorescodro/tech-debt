@@ -85,6 +85,9 @@ techDebtReport {
 
     // Enable the collection of @Suppress annotations (Optional, default is false)
     collectSuppress.set(true)
+
+    // Enable the collection of TODO and FIXME comments (Optional, default is false)
+    collectComments.set(true)
 }
 ```
 
@@ -92,6 +95,7 @@ techDebtReport {
 
 - **Consolidated HTML Report**: A clean, easy-to-read summary of all technical debt from all modules in your project.
 - **Suppress Support**: Optionally collect and visualize suppressed rules (e.g., `@Suppress("MagicNumber")`) in the report.
+- **TODO/FIXME Comments Support**: Optionally collect and visualize `TODO` and `FIXME` comments from your source code.
 - **Priority Levels**: Support for `LOW`, `MEDIUM`, and `HIGH` priority levels (and `NONE`).
 - **Ticket Linking**: Keep track of related tickets in your issue tracking system.
 - **Multi-module Support**: Automatically collects data from all subprojects.
