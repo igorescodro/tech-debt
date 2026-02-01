@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-internal class TechDebtProcessorIntegrationTest {
+internal class TechDebtSymbolProcessorIntegrationTest {
 
     @TempDir lateinit var tempDir: File
 
