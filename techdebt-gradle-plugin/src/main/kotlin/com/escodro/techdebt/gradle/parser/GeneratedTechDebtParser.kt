@@ -19,11 +19,13 @@ internal class GeneratedTechDebtParser {
             if (file.exists()) {
                 val items = Json.decodeFromString<List<TechDebtItem>>(file.readText())
                 val updatedItems =
-                    if (items.any { it.sourceSet == "unknown" }) {
-                        val sourceSet = resolveSourceSet(file.absolutePath)
-                        items.map { it.copy(sourceSet = sourceSet) }
-                    } else {
-                        items
+                    items.map { item ->
+                        if (shouldResolveSourceSet(item.sourceSet)) {
+                            val sourceSet = resolveSourceSet(file.absolutePath)
+                            item.copy(sourceSet = sourceSet)
+                        } else {
+                            item
+                        }
                     }
                 allItems.addAll(updatedItems)
             }
@@ -31,13 +33,25 @@ internal class GeneratedTechDebtParser {
         return allItems
     }
 
+    private fun shouldResolveSourceSet(sourceSet: String): Boolean {
+        if (sourceSet == "unknown" || sourceSet == "main") return true
+        // If it's already an absolute path or has a line number colon, don't resolve
+        return !sourceSet.contains("/") && !sourceSet.contains("\\") && !sourceSet.contains(":")
+    }
+
     private fun resolveSourceSet(path: String): String {
+        // Example: .../build/generated/ksp/main/resources/techdebt/report.json
+        // We want to find the source set name which is after 'ksp'
         val parts = path.split("/")
         val kspIndex = parts.indexOf("ksp")
-        return if (kspIndex != -1 && kspIndex + 1 < parts.size) {
-            parts[kspIndex + 1]
-        } else {
-            "unknown"
+        if (kspIndex != -1 && kspIndex + 1 < parts.size) {
+            val sourceSetName = parts[kspIndex + 1]
+            // If it's KSP generated, we don't have exact line numbers easily here,
+            // but we can at least return 'main' or similar.
+            // Actually, if it's 'unknown', we don't have the file path.
+            // Let's try to find if we can provide a better path.
+            return sourceSetName
         }
+        return "unknown"
     }
 }

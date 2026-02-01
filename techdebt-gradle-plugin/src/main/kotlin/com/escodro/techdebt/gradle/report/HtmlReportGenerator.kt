@@ -176,6 +176,7 @@ internal class HtmlReportGenerator {
                     +"Source Set"
                 }
             }
+            th { +"Date" }
         }
     }
 
@@ -208,6 +209,7 @@ internal class HtmlReportGenerator {
                 td { +item.priority }
             }
             td { +item.sourceSet }
+            td { +(item.date ?: "N/A") }
         }
     }
 

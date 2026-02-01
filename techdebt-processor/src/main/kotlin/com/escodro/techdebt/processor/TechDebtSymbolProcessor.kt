@@ -40,9 +40,6 @@ internal class TechDebtSymbolProcessor {
                 return@forEach
             }
 
-            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
-            ksFile?.let { allOriginatingFiles.add(it) }
-
             val annotation =
                 symbol.annotations.firstOrNull {
                     it.annotationType.resolve().declaration.qualifiedName?.asString() ==
@@ -60,6 +57,17 @@ internal class TechDebtSymbolProcessor {
 
             val name = getSymbolName(symbol)
 
+            val location = symbol.location
+            val sourceLocation =
+                if (location is com.google.devtools.ksp.symbol.FileLocation) {
+                    "${location.filePath}:${location.lineNumber}"
+                } else {
+                    sourceSet
+                }
+
+            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
+            ksFile?.let { allOriginatingFiles.add(it) }
+
             allItems.add(
                 TechDebtItem(
                     moduleName = moduleName,
@@ -67,7 +75,7 @@ internal class TechDebtSymbolProcessor {
                     description = args["description"]?.toString().orEmpty(),
                     ticket = args["ticket"]?.toString().orEmpty(),
                     priority = priority,
-                    sourceSet = sourceSet
+                    sourceSet = sourceLocation
                 )
             )
         }

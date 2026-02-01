@@ -31,9 +31,6 @@ internal class SuppressSymbolProcessor {
         resolver.getSymbolsWithAnnotation(Suppress::class.qualifiedName!!).forEach { symbol ->
             if (!symbol.validate()) return@forEach
 
-            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
-            ksFile?.let { allOriginatingFiles.add(it) }
-
             val suppressAnnotations =
                 symbol.annotations
                     .filter {
@@ -55,6 +52,17 @@ internal class SuppressSymbolProcessor {
 
             val name = getSymbolName(symbol)
 
+            val location = symbol.location
+            val sourceLocation =
+                if (location is com.google.devtools.ksp.symbol.FileLocation) {
+                    "${location.filePath}:${location.lineNumber}"
+                } else {
+                    sourceSet
+                }
+
+            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
+            ksFile?.let { allOriginatingFiles.add(it) }
+
             ruleNames.forEach { rule ->
                 allItems.add(
                     TechDebtItem(
@@ -63,7 +71,7 @@ internal class SuppressSymbolProcessor {
                         description = rule,
                         ticket = "",
                         priority = "",
-                        sourceSet = sourceSet,
+                        sourceSet = sourceLocation,
                         type = TechDebtItemType.SUPPRESS
                     )
                 )

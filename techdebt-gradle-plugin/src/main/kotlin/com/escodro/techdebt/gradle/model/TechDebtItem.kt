@@ -21,7 +21,8 @@ data class TechDebtItem(
     val ticket: String,
     val priority: String,
     val sourceSet: String,
-    val type: TechDebtItemType = TechDebtItemType.TECH_DEBT
+    val type: TechDebtItemType = TechDebtItemType.TECH_DEBT,
+    val date: String? = null
 ) {
     /**
      * Returns the priority order for the tech debt item.

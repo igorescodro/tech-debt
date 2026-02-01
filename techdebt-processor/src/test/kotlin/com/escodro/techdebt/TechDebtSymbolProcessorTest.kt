@@ -70,6 +70,8 @@ internal class TechDebtSymbolProcessorTest {
 
         val content = jsonFile.readText()
         assertTrue(content.contains("test-project"), "JSON should contain module name")
+        println("[DEBUG_LOG] JSON content: $content")
+        assertTrue(content.contains("MyClass.kt"), "JSON should contain file path")
     }
 
     @Test

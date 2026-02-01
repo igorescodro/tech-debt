@@ -1159,4 +1159,49 @@ internal class TechDebtPluginTest {
                     .trimIndent()
             )
     }
+    @Test
+    fun `test report contains Date column when enableGitMetadata is enabled`() {
+        setupProject(
+            extraConfig =
+                """
+            techDebtReport {
+                enableGitMetadata = true
+            }
+        """
+        )
+
+        // Create a mock JSON file
+        val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
+        kspDir.mkdirs()
+        File(kspDir, "report.json")
+            .writeText(
+                """
+            [
+                {
+                    "moduleName": ":app",
+                    "name": "com.example.MyClass",
+                    "description": "Test debt",
+                    "ticket": "JIRA-123",
+                    "priority": "HIGH",
+                    "sourceSet": "main"
+                }
+            ]
+            """
+                    .trimIndent()
+            )
+
+        val result =
+            GradleRunner.create()
+                .withProjectDir(tempDir)
+                .withArguments("generateTechDebtReport")
+                .withPluginClasspath()
+                .build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":generateTechDebtReport")?.outcome)
+
+        val reportFile = File(tempDir, "build/reports/techdebt/consolidated-report.html")
+        val content = reportFile.readText()
+        assertTrue(content.contains("<th>Date</th>"))
+        assertTrue(content.contains("<td>N/A</td>"))
+    }
 }
