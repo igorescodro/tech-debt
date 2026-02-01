@@ -76,6 +76,15 @@ internal class HtmlReportGenerator {
         }
     }
 
+    /**
+     * Generates a summary header with the counts of items per priority.
+     *
+     * @param totalItems the total number of items
+     * @param highItems the number of high priority items
+     * @param mediumItems the number of medium priority items
+     * @param lowItems the number of low priority items
+     * @param noneItems the number of items without priority
+     */
     private fun BODY.header(
         totalItems: Int,
         highItems: Int,
@@ -107,6 +116,14 @@ internal class HtmlReportGenerator {
         }
     }
 
+    /**
+     * Generates a table with the tech debt items.
+     *
+     * @param items the list of tech debt items
+     * @param isSuppress true if the items are from `@Suppress` annotations
+     * @param isComment true if the items are from comments
+     * @param baseTicketUrl the base URL for the tickets
+     */
     private fun BODY.table(
         items: List<TechDebtItem>,
         isSuppress: Boolean = false,
@@ -128,6 +145,12 @@ internal class HtmlReportGenerator {
         }
     }
 
+    /**
+     * Generates the header for the tech debt table.
+     *
+     * @param isSuppress true if the items are from `@Suppress` annotations
+     * @param isComment true if the items are from comments
+     */
     private fun THEAD.tableHeader(isSuppress: Boolean, isComment: Boolean) {
         tr {
             th { +"Module" }
@@ -156,6 +179,14 @@ internal class HtmlReportGenerator {
         }
     }
 
+    /**
+     * Generates a row for the tech debt table.
+     *
+     * @param item the tech debt item
+     * @param isSuppress true if the items are from `@Suppress` annotations
+     * @param isComment true if the items are from comments
+     * @param baseTicketUrl the base URL for the tickets
+     */
     private fun TBODY.tableRow(
         item: TechDebtItem,
         isSuppress: Boolean,

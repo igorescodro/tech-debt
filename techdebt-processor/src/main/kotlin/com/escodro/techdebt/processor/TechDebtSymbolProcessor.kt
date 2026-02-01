@@ -12,8 +12,19 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.validate
 import kotlin.sequences.forEach
 
+/** Symbol processor responsible for processing symbols annotated with `@TechDebt`. */
 internal class TechDebtSymbolProcessor {
 
+    /**
+     * Processes the symbols annotated with `@TechDebt`.
+     *
+     * @param resolver the KSP resolver
+     * @param allItems the list of tech debt items to be populated
+     * @param allOriginatingFiles the set of originating files to be populated
+     * @param moduleName the name of the module being processed
+     * @param sourceSet the name of the source set being processed
+     * @param unableToProcess the list of symbols that were unable to be processed
+     */
     @Suppress("LongParameterList")
     fun process(
         resolver: Resolver,
