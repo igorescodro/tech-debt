@@ -118,7 +118,7 @@ internal class ReportStyle {
                     border-left: 5px solid #4CAF50;
                 }
                 
-                details summary {
+                .card details summary {
                     padding: 15px;
                     cursor: pointer;
                     list-style: none;
@@ -127,7 +127,7 @@ internal class ReportStyle {
                     align-items: center;
                 }
                 
-                details summary::-webkit-details-marker {
+                .card details summary::-webkit-details-marker {
                     display: none;
                 }
     """

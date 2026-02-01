@@ -4,6 +4,7 @@ import com.escodro.techdebt.gradle.model.TechDebtItem
 import com.escodro.techdebt.gradle.model.TechDebtItemType
 import java.io.Writer
 import kotlinx.html.BODY
+import kotlinx.html.ButtonType
 import kotlinx.html.HTML
 import kotlinx.html.body
 import kotlinx.html.button
@@ -131,11 +132,11 @@ internal class HtmlReportGenerator(
 
     private fun appendActionButtons(body: BODY) {
         body.div(classes = "action-container") {
-            button(classes = "action-button") {
+            button(classes = "action-button", type = ButtonType.button) {
                 attributes["onclick"] = "expandAll()"
                 +"Expand All"
             }
-            button(classes = "action-button") {
+            button(classes = "action-button", type = ButtonType.button) {
                 attributes["onclick"] = "collapseAll()"
                 +"Collapse All"
             }
