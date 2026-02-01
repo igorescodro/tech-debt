@@ -6,9 +6,9 @@ import java.io.StringWriter
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-internal class ConsolidatedHtmlReportGeneratorTest {
+internal class HtmlReportGeneratorTest {
 
-    private val generator = ConsolidatedHtmlReportGenerator()
+    private val generator = HtmlReportGenerator()
 
     @Test
     fun `test generator creates HTML with correct summary counts`() {
