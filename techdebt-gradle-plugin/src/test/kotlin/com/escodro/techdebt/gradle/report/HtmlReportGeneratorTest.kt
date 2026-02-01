@@ -136,6 +136,16 @@ internal class HtmlReportGeneratorTest {
         )
     }
 
+    @Test
+    fun `test generator includes expand all and collapse all buttons`() {
+        val writer = StringWriter()
+        generator.generate(writer, emptyList())
+        val html = writer.toString()
+
+        assertTrue(html.contains("Expand All"))
+        assertTrue(html.contains("Collapse All"))
+    }
+
     private fun createItem(
         module: String,
         priority: String,
