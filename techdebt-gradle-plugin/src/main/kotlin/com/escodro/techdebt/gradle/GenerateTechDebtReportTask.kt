@@ -3,7 +3,7 @@ package com.escodro.techdebt.gradle
 import com.escodro.techdebt.gradle.model.TechDebtItem
 import com.escodro.techdebt.gradle.parser.CommentParser
 import com.escodro.techdebt.gradle.parser.GeneratedTechDebtParser
-import com.escodro.techdebt.gradle.report.ConsolidatedHtmlReportGenerator
+import com.escodro.techdebt.gradle.report.HtmlReportGenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -82,7 +82,7 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         outputFile.parentFile.mkdirs()
 
         outputFile.bufferedWriter().use { writer ->
-            ConsolidatedHtmlReportGenerator()
+            HtmlReportGenerator()
                 .generate(writer = writer, items = items, baseTicketUrl = baseTicketUrl.orNull)
         }
 

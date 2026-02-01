@@ -27,7 +27,7 @@ import kotlinx.html.tr
 import kotlinx.html.unsafe
 
 /** Generates a consolidated HTML report with tech debt items from all modules. */
-internal class ConsolidatedHtmlReportGenerator {
+internal class HtmlReportGenerator {
 
     /**
      * Generates a consolidated HTML report with the tech debt items.
@@ -48,7 +48,7 @@ internal class ConsolidatedHtmlReportGenerator {
         val noneItems = techDebtItems.count { it.priority == "NONE" }
 
         writer.appendHTML().html {
-            head { style { unsafe { +CONSOLIDATED_REPORT_STYLE.trimIndent() } } }
+            head { style { unsafe { +HTML_REPORT_STYLE.trimIndent() } } }
             body {
                 h1 { +"Tech Debt Report" }
 
@@ -198,7 +198,7 @@ internal class ConsolidatedHtmlReportGenerator {
     }
 }
 
-private const val CONSOLIDATED_REPORT_STYLE =
+private const val HTML_REPORT_STYLE =
     """
     body {
         font-family: sans-serif;
