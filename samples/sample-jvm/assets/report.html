@@ -38,35 +38,180 @@ h1 {
 .medium { background-color: #F5A623; }
 .low { background-color: #4CAF50; }
 .none { background-color: #9E9E9E; }
-table {
-    width: 100%;
-    border-collapse: collapse;
+
+.action-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+.action-button {
+    padding: 8px 16px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+.action-button:hover {
+    background-color: #45a049;
+}
+
+.card {
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     border-radius: 8px;
+    margin-bottom: 12px;
     overflow: hidden;
+    border-left: 5px solid #4CAF50;
 }
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+
+details summary {
+    padding: 15px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-th {
-    background-color: #4CAF50;
-    color: white;
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.card-header-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.header-column {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.column-small {
+    flex: 0 0 150px;
+}
+
+.column-medium {
+    flex: 0 0 455px;
+}
+
+.module-badge {
+    background-color: #eee;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #666;
+}
+
+.symbol-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.expand-icon {
+    width: 16px;
+    height: 16px;
+    color: #999;
+    transition: transform 0.2s;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.expand-icon::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>') no-repeat center;
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>') no-repeat center;
+}
+
+details[open] .expand-icon {
+    transform: rotate(180deg);
+}
+
+.card-content {
+    padding: 0 15px 15px 15px;
+    border-top: 1px solid #eee;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    background-color: #fafafa;
+}
+
+.info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.info-label {
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    color: #999;
+    font-weight: bold;
+}
+
+.info-value {
     font-size: 14px;
+    color: #333;
 }
-tr:hover {
-    background-color: #f5f5f5;
-}
+
 .ticket {
     font-family: monospace;
     background-color: #eee;
     padding: 2px 4px;
     border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .summary-box {
+        padding: 10px;
+    }
+    .summary-box h2 {
+        font-size: 24px;
+    }
+    .card-header-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    .header-column {
+        flex: none;
+        width: 100%;
+    }
+    .column-small, .column-medium {
+        flex: none;
+        width: auto;
+    }
 }</style>
+    <script>function expandAll() {
+    document.querySelectorAll('details').forEach(d => d.open = true);
+}
+function collapseAll() {
+    document.querySelectorAll('details').forEach(d => d.open = false);
+}</script>
   </head>
   <body>
     <h1>Tech Debt Report</h1>
@@ -87,111 +232,164 @@ tr:hover {
         <h2>1</h2>
 <span>No Priority</span></div>
     </div>
+    <div class="action-container"><button class="action-button" onclick="expandAll()">Expand All</button><button class="action-button" onclick="collapseAll()">Collapse All</button></div>
     <h2>Annotated Tech Debt</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Module</th>
-          <th>Symbol</th>
-          <th>Description</th>
-          <th>Ticket</th>
-          <th>Priority</th>
-          <th>Source Set</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td><strong>Sample.kt</strong></td>
-          <td>Too many functions</td>
-          <td></td>
-          <td>HIGH</td>
-          <td>main</td>
-        </tr>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td><strong>com.escodro.sample.Sample.someComplexFunction</strong></td>
-          <td>This function is too complex</td>
-          <td><a href="https://github.com/igorescodro/tech-debt/issues/26" target="_blank">26</a></td>
-          <td>HIGH</td>
-          <td>main</td>
-        </tr>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td><strong>com.escodro.sample.Sample.someProperty</strong></td>
-          <td>This property should be private</td>
-          <td><a href="https://github.com/igorescodro/tech-debt/issues/23" target="_blank">23</a></td>
-          <td>MEDIUM</td>
-          <td>main</td>
-        </tr>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td><strong>com.escodro.sample.Sample</strong></td>
-          <td>This class needs a better name</td>
-          <td><a href="https://github.com/igorescodro/tech-debt/issues/20" target="_blank">20</a></td>
-          <td>LOW</td>
-          <td>main</td>
-        </tr>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td><strong>com.escodro.sample.Sample.legacyFunction</strong></td>
-          <td>Legacy code, handle with care</td>
-          <td></td>
-          <td>NONE</td>
-          <td>main</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column column-medium"><span class="symbol-name">Sample.kt</span></div>
+              <div class="header-column"><span>Too many functions</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Priority</span><span class="info-value">HIGH</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:1</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column column-medium"><span class="symbol-name">com.escodro.sample.Sample.someComplexFunction</span></div>
+              <div class="header-column"><span>This function is too complex</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Ticket</span><span class="info-value"><a href="https://github.com/igorescodro/tech-debt/issues/26" target="_blank" rel="noopener noreferrer">26</a></span></div>
+          <div class="info-group"><span class="info-label">Priority</span><span class="info-value">HIGH</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:19</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column column-medium"><span class="symbol-name">com.escodro.sample.Sample.someProperty</span></div>
+              <div class="header-column"><span>This property should be private</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Ticket</span><span class="info-value"><a href="https://github.com/igorescodro/tech-debt/issues/23" target="_blank" rel="noopener noreferrer">23</a></span></div>
+          <div class="info-group"><span class="info-label">Priority</span><span class="info-value">MEDIUM</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:16</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column column-medium"><span class="symbol-name">com.escodro.sample.Sample</span></div>
+              <div class="header-column"><span>This class needs a better name</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Ticket</span><span class="info-value"><a href="https://github.com/igorescodro/tech-debt/issues/20" target="_blank" rel="noopener noreferrer">20</a></span></div>
+          <div class="info-group"><span class="info-label">Priority</span><span class="info-value">LOW</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:9</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column column-medium"><span class="symbol-name">com.escodro.sample.Sample.legacyFunction</span></div>
+              <div class="header-column"><span>Legacy code, handle with care</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Priority</span><span class="info-value">NONE</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:25</span></div>
+        </div>
+      </details>
+    </div>
     <h2>Comments</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Module</th>
-          <th>Comment</th>
-          <th>Location</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td>TODO: Refactor function when code is ready</td>
-          <td>src/main/kotlin/com/escodro/sample/Sample.kt:24</td>
-        </tr>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td>TODO: Break legacy function</td>
-          <td>src/main/kotlin/com/escodro/sample/Sample.kt:31</td>
-        </tr>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td>TODO: Simplify this function</td>
-          <td>src/main/kotlin/com/escodro/sample/Sample.kt:39</td>
-        </tr>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td>TODO: reduce function complexity</td>
-          <td>src/main/kotlin/com/escodro/sample/Sample.kt:43</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column"><span>Comment: TODO: Refactor function when code is ready</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Location</span><span class="info-value">src/main/kotlin/com/escodro/sample/Sample.kt:20</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column"><span>Comment: TODO: Break legacy function</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Location</span><span class="info-value">src/main/kotlin/com/escodro/sample/Sample.kt:27</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column"><span>Comment: TODO: Simplify this function</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Location</span><span class="info-value">src/main/kotlin/com/escodro/sample/Sample.kt:35</span></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column"><span>Comment: TODO: reduce function complexity</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Location</span><span class="info-value">src/main/kotlin/com/escodro/sample/Sample.kt:39</span></div>
+        </div>
+      </details>
+    </div>
     <h2>Suppressed Rules</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Module</th>
-          <th>Symbol</th>
-          <th>Rule</th>
-          <th>Source Set</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>:samples:sample-jvm</td>
-          <td><strong>com.escodro.sample.Sample.suppressedFunction</strong></td>
-          <td>UNUSED_PARAMETER</td>
-          <td>main</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card">
+      <details><summary>
+          <div class="card-header">
+            <div class="card-header-main">
+              <div class="header-column column-small"><span class="module-badge">:samples:sample-jvm</span></div>
+              <div class="header-column column-medium"><span class="symbol-name">com.escodro.sample.Sample.suppressedFunction</span></div>
+              <div class="header-column"><span>Rule: UNUSED_PARAMETER</span></div>
+            </div>
+          </div>
+<span class="expand-icon"></span></summary>
+        <div class="card-content">
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:31</span></div>
+          <div class="info-group"><span class="info-label">Symbol</span><span class="info-value">com.escodro.sample.Sample.suppressedFunction</span></div>
+        </div>
+      </details>
+    </div>
   </body>
 </html>
