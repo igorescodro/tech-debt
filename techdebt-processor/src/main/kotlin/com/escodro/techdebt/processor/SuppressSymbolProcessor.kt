@@ -9,8 +9,18 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.validate
 import kotlin.sequences.forEach
 
+/** Symbol processor responsible for processing symbols annotated with `@Suppress`. */
 internal class SuppressSymbolProcessor {
 
+    /**
+     * Processes the symbols annotated with `@Suppress`.
+     *
+     * @param resolver the KSP resolver
+     * @param allItems the list of tech debt items to be populated
+     * @param allOriginatingFiles the set of originating files to be populated
+     * @param moduleName the name of the module being processed
+     * @param sourceSet the name of the source set being processed
+     */
     fun process(
         resolver: Resolver,
         allItems: MutableList<TechDebtItem>,

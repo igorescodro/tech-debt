@@ -7,6 +7,12 @@ import org.apache.log4j.Logger
 private const val TECH_DEBT_PROPERTIES = "techdebt.properties"
 private const val VERSION_PROPERTY = "version"
 
+/**
+ * Returns the current version of the plugin. The version is loaded from the `techdebt.properties`
+ * file.
+ *
+ * @return the plugin version
+ */
 fun getPluginVersion(): String {
     val props =
         Properties().apply {

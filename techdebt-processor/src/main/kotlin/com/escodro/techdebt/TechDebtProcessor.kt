@@ -13,7 +13,8 @@ import com.google.devtools.ksp.symbol.KSFile
 import java.io.IOException
 
 /**
- * Processes annotations with `@TechDebt` and generates a technical debt report.
+ * Processes annotations with `@TechDebt` and `@Suppress` and generates a technical debt report in
+ * JSON format.
  *
  * @property environment the symbol processor environment
  */
@@ -31,6 +32,13 @@ internal class TechDebtProcessor(
     private val techDebtSymbolProcessor: TechDebtSymbolProcessor = TechDebtSymbolProcessor()
     private val suppressSymbolProcessor: SuppressSymbolProcessor = SuppressSymbolProcessor()
 
+    /**
+     * Processes the symbols in the current round. It delegates the processing of `@TechDebt` and
+     * `@Suppress` annotations to their respective processors.
+     *
+     * @param resolver the KSP resolver
+     * @return the list of symbols that were unable to be processed in this round
+     */
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val unableToProcess = mutableListOf<KSAnnotated>()
 
@@ -54,6 +62,10 @@ internal class TechDebtProcessor(
         return unableToProcess
     }
 
+    /**
+     * Finishes the processing by generating the consolidated JSON report with all the collected
+     * tech debt items.
+     */
     @Suppress("SpreadOperator", "TooGenericExceptionCaught")
     override fun finish() {
         if (allItems.isEmpty()) return
