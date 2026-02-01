@@ -1,6 +1,6 @@
 <html>
   <head>
-    <style>body {
+    <style>                body {
     font-family: sans-serif;
     background-color: #f3f3f3;
     margin: 0;
@@ -9,7 +9,7 @@
 h1 {
     color: #333;
 }
-.summary-container {
+                .summary-container {
     display: flex;
     gap: 20px;
     margin-bottom: 30px;
@@ -38,8 +38,7 @@ h1 {
 .medium { background-color: #F5A623; }
 .low { background-color: #4CAF50; }
 .none { background-color: #9E9E9E; }
-
-.action-container {
+                .action-container {
     margin-bottom: 20px;
     display: flex;
     justify-content: flex-end;
@@ -57,8 +56,7 @@ h1 {
 .action-button:hover {
     background-color: #45a049;
 }
-
-.card {
+                        .card {
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     border-radius: 8px;
@@ -67,7 +65,7 @@ h1 {
     border-left: 5px solid #4CAF50;
 }
 
-details summary {
+.card details summary {
     padding: 15px;
     cursor: pointer;
     list-style: none;
@@ -76,11 +74,10 @@ details summary {
     align-items: center;
 }
 
-details summary::-webkit-details-marker {
+.card details summary::-webkit-details-marker {
     display: none;
 }
-
-.card-header {
+        .card-header {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -122,8 +119,7 @@ details summary::-webkit-details-marker {
     font-weight: bold;
     color: #333;
 }
-
-.expand-icon {
+        .expand-icon {
     width: 16px;
     height: 16px;
     color: #999;
@@ -146,8 +142,7 @@ details summary::-webkit-details-marker {
 details[open] .expand-icon {
     transform: rotate(180deg);
 }
-
-.card-content {
+        .card-content {
     padding: 0 15px 15px 15px;
     border-top: 1px solid #eee;
     display: grid;
@@ -181,8 +176,7 @@ details[open] .expand-icon {
     padding: 2px 4px;
     border-radius: 4px;
 }
-
-@media (max-width: 600px) {
+                @media (max-width: 600px) {
     body {
         padding: 10px;
     }
@@ -232,7 +226,7 @@ function collapseAll() {
         <h2>1</h2>
 <span>No Priority</span></div>
     </div>
-    <div class="action-container"><button class="action-button" onclick="expandAll()">Expand All</button><button class="action-button" onclick="collapseAll()">Collapse All</button></div>
+    <div class="action-container"><button type="button" class="action-button" onclick="expandAll()">Expand All</button><button type="button" class="action-button" onclick="collapseAll()">Collapse All</button></div>
     <h2>Annotated Tech Debt</h2>
     <div class="card">
       <details><summary>
@@ -246,7 +240,7 @@ function collapseAll() {
 <span class="expand-icon"></span></summary>
         <div class="card-content">
           <div class="info-group"><span class="info-label">Priority</span><span class="info-value">HIGH</span></div>
-          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:1</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">main</span></div>
         </div>
       </details>
     </div>
@@ -263,7 +257,7 @@ function collapseAll() {
         <div class="card-content">
           <div class="info-group"><span class="info-label">Ticket</span><span class="info-value"><a href="https://github.com/igorescodro/tech-debt/issues/26" target="_blank" rel="noopener noreferrer">26</a></span></div>
           <div class="info-group"><span class="info-label">Priority</span><span class="info-value">HIGH</span></div>
-          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:19</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">main</span></div>
         </div>
       </details>
     </div>
@@ -280,7 +274,7 @@ function collapseAll() {
         <div class="card-content">
           <div class="info-group"><span class="info-label">Ticket</span><span class="info-value"><a href="https://github.com/igorescodro/tech-debt/issues/23" target="_blank" rel="noopener noreferrer">23</a></span></div>
           <div class="info-group"><span class="info-label">Priority</span><span class="info-value">MEDIUM</span></div>
-          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:16</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">main</span></div>
         </div>
       </details>
     </div>
@@ -297,7 +291,7 @@ function collapseAll() {
         <div class="card-content">
           <div class="info-group"><span class="info-label">Ticket</span><span class="info-value"><a href="https://github.com/igorescodro/tech-debt/issues/20" target="_blank" rel="noopener noreferrer">20</a></span></div>
           <div class="info-group"><span class="info-label">Priority</span><span class="info-value">LOW</span></div>
-          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:9</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">main</span></div>
         </div>
       </details>
     </div>
@@ -313,7 +307,7 @@ function collapseAll() {
 <span class="expand-icon"></span></summary>
         <div class="card-content">
           <div class="info-group"><span class="info-label">Priority</span><span class="info-value">NONE</span></div>
-          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:25</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">main</span></div>
         </div>
       </details>
     </div>
@@ -386,7 +380,7 @@ function collapseAll() {
           </div>
 <span class="expand-icon"></span></summary>
         <div class="card-content">
-          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">/Users/igorescodro/StudioProjects/TechDebt/samples/sample-jvm/src/main/kotlin/com/escodro/sample/Sample.kt:31</span></div>
+          <div class="info-group"><span class="info-label">Source Set</span><span class="info-value">main</span></div>
           <div class="info-group"><span class="info-label">Symbol</span><span class="info-value">com.escodro.sample.Sample.suppressedFunction</span></div>
         </div>
       </details>
