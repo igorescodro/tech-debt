@@ -7,6 +7,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import org.apache.log4j.Logger
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.errors.GitAPIException
 import org.eclipse.jgit.blame.BlameResult
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
@@ -60,6 +61,9 @@ internal class GitParser(private val rootProjectDirectory: File) {
             extractGitInfo(blame, lineNumber)
         } catch (e: IOException) {
             logger.error("Failed to get Git info for file: $relativePath at line: $lineNumber", e)
+            null
+        }catch (e: GitAPIException) {
+            logger.error("Failed to get Git blame for file: $relativePath at line: $lineNumber", e)
             null
         }
     }
