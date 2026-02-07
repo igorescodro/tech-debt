@@ -34,8 +34,7 @@ internal class GeneratedTechDebtParser {
     }
 
     private fun shouldResolveSourceSet(sourceSet: String): Boolean {
-        if (sourceSet == SOURCE_SET_UNKNOWN || sourceSet == SOURCE_SET_MAIN) return true
-        return !sourceSet.contains("/") && !sourceSet.contains("\\") && !sourceSet.contains(":")
+        return sourceSet == SOURCE_SET_UNKNOWN || sourceSet == SOURCE_SET_MAIN
     }
 
     private fun resolveSourceSet(path: String): String {

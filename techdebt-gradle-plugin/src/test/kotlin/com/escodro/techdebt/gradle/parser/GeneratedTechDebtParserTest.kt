@@ -79,4 +79,35 @@ internal class GeneratedTechDebtParserTest {
         assertEquals(1, items.size)
         assertEquals("customSourceSet", items.first().sourceSet)
     }
+
+    @Test
+    fun `test parser does not resolve sourceSet when it is a bare filename`() {
+        val project = ProjectBuilder.builder().withProjectDir(tempDir).build()
+        val kspDir = File(tempDir, "build/generated/ksp/main/resources/techdebt")
+        kspDir.mkdirs()
+        val jsonFile =
+            File(kspDir, "report.json").apply {
+                writeText(
+                    """
+                [
+                    {
+                        "moduleName": ":app",
+                        "name": "com.example.MyClass",
+                        "description": "Test debt",
+                        "ticket": "JIRA-123",
+                        "priority": "HIGH",
+                        "sourceSet": "MyFile.kt"
+                    }
+                ]
+                """
+                        .trimIndent()
+                )
+            }
+
+        val jsonFiles = project.files(jsonFile)
+        val items = parser.parse(jsonFiles)
+
+        assertEquals(1, items.size)
+        assertEquals("MyFile.kt", items.first().sourceSet)
+    }
 }
