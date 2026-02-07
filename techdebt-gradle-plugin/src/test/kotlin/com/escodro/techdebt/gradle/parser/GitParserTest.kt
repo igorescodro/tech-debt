@@ -31,7 +31,8 @@ internal class GitParserTest {
                 description = "Test description",
                 ticket = "T-123",
                 priority = "HIGH",
-                sourceSet = "TestFile.kt:1"
+                sourceSet = "TestFile.kt:1",
+                location = file.absolutePath + ":1"
             )
 
         val results = parser.parse(listOf(item))
@@ -45,6 +46,8 @@ internal class GitParserTest {
     @Test
     fun `test git parser returns original items if no repository found`() {
         val parser = GitParser(tempDir)
+        val file = File(tempDir, "TestFile.kt")
+        file.writeText("content")
         val item =
             TechDebtItem(
                 moduleName = ":app",
@@ -52,7 +55,8 @@ internal class GitParserTest {
                 description = "Test description",
                 ticket = "T-123",
                 priority = "HIGH",
-                sourceSet = "TestFile.kt:1"
+                sourceSet = "TestFile.kt:1",
+                location = file.absolutePath + ":1"
             )
 
         val results = parser.parse(listOf(item))
@@ -78,7 +82,8 @@ internal class GitParserTest {
                 description = "Desc 1",
                 ticket = "T-1",
                 priority = "HIGH",
-                sourceSet = "TestFile.kt:1"
+                sourceSet = "TestFile.kt:1",
+                location = file.absolutePath + ":1"
             )
         val item2 =
             TechDebtItem(
@@ -87,7 +92,8 @@ internal class GitParserTest {
                 description = "Desc 2",
                 ticket = "T-2",
                 priority = "LOW",
-                sourceSet = "TestFile.kt:2"
+                sourceSet = "TestFile.kt:2",
+                location = file.absolutePath + ":2"
             )
 
         val results = parser.parse(listOf(item1, item2))
@@ -113,7 +119,8 @@ internal class GitParserTest {
                 description = "Test description",
                 ticket = "T-123",
                 priority = "HIGH",
-                sourceSet = "MainFile.kt" // Simulating when KSP returns just a filename
+                sourceSet = "MainFile.kt", // Simulating when KSP returns just a filename
+                location = file.absolutePath + ":1"
             )
 
         val results = parser.parse(listOf(item))
