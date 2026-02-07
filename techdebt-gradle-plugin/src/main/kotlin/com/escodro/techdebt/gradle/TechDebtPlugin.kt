@@ -16,6 +16,7 @@ class TechDebtPlugin : Plugin<Project> {
             project.extensions.create("techDebtReport", TechDebtExtension::class.java)
         extension.collectSuppress.convention(false)
         extension.collectComments.convention(false)
+        extension.enableGitMetadata.convention(false)
 
         val reportTask: TaskProvider<GenerateTechDebtReportTask> =
             project.tasks.register(
@@ -23,6 +24,7 @@ class TechDebtPlugin : Plugin<Project> {
                 GenerateTechDebtReportTask::class.java
             ) { task ->
                 task.collectComments.set(extension.collectComments)
+                task.enableGitMetadata.set(extension.enableGitMetadata)
                 task.baseTicketUrl.set(extension.baseTicketUrl)
                 task.projectPathByDirectory.set(
                     project.allprojects.associate { it.projectDir.absolutePath to it.path }

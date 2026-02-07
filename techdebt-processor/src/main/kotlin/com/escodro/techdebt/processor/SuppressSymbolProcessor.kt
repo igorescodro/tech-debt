@@ -1,5 +1,6 @@
 package com.escodro.techdebt.processor
 
+import com.escodro.techdebt.extension.getSourceLocation
 import com.escodro.techdebt.extension.getSymbolName
 import com.escodro.techdebt.report.TechDebtItem
 import com.escodro.techdebt.report.TechDebtItemType
@@ -31,9 +32,6 @@ internal class SuppressSymbolProcessor {
         resolver.getSymbolsWithAnnotation(Suppress::class.qualifiedName!!).forEach { symbol ->
             if (!symbol.validate()) return@forEach
 
-            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
-            ksFile?.let { allOriginatingFiles.add(it) }
-
             val suppressAnnotations =
                 symbol.annotations
                     .filter {
@@ -54,6 +52,9 @@ internal class SuppressSymbolProcessor {
                 }
 
             val name = getSymbolName(symbol)
+            val sourceLocation = getSourceLocation(symbol = symbol, sourceSet = sourceSet)
+            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
+            ksFile?.let { allOriginatingFiles.add(it) }
 
             ruleNames.forEach { rule ->
                 allItems.add(
@@ -63,7 +64,7 @@ internal class SuppressSymbolProcessor {
                         description = rule,
                         ticket = "",
                         priority = "",
-                        sourceSet = sourceSet,
+                        sourceSet = sourceLocation,
                         type = TechDebtItemType.SUPPRESS
                     )
                 )

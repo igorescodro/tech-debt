@@ -18,6 +18,9 @@ abstract class TechDebtExtension {
     /** Whether to collect TODO/FIXME comments. Defaults to `false`. */
     abstract val collectComments: Property<Boolean>
 
+    /** Whether to enable Git metadata (e.g. last modified date). Defaults to `false`. */
+    abstract val enableGitMetadata: Property<Boolean>
+
     /**
      * The base URL for the tickets. If set, the ticket property in the HTML report will be a link.
      */

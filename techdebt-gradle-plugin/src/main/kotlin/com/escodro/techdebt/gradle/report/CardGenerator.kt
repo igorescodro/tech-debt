@@ -64,6 +64,12 @@ internal class CardGenerator {
                     if (item.type == TechDebtItemType.SUPPRESS) {
                         infoGroup("Symbol") { +item.name }
                     }
+                    if (item.lastModified != null) {
+                        infoGroup("Last Modified") { +item.lastModified }
+                    }
+                    if (item.author != null) {
+                        infoGroup("Author") { +item.author }
+                    }
                 }
             }
         }
@@ -72,7 +78,17 @@ internal class CardGenerator {
     private fun FlowContent.infoGroup(label: String, block: FlowContent.() -> Unit) {
         div(classes = "info-group") {
             span(classes = "info-label") { +label }
-            span(classes = "info-value") { block() }
+            div(classes = "info-value") {
+                attributes["style"] =
+                    """
+                    min-width: 0;
+                    white-space: normal;
+                    overflow-wrap: anywhere;
+                    word-break: break-word;
+                    """
+                        .trimIndent()
+                block()
+            }
         }
     }
 
