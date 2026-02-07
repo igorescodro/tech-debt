@@ -78,9 +78,7 @@ internal class CardGenerator {
     private fun FlowContent.infoGroup(label: String, block: FlowContent.() -> Unit) {
         div(classes = "info-group") {
             span(classes = "info-label") { +label }
-            div(classes = "info-value") {
-                block()
-            }
+            div(classes = "info-value") { block() }
         }
     }
 
