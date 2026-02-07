@@ -1,6 +1,7 @@
 package com.escodro.techdebt.processor
 
 import com.escodro.techdebt.TechDebt
+import com.escodro.techdebt.extension.getSourceLocation
 import com.escodro.techdebt.extension.getSymbolName
 import com.escodro.techdebt.report.TechDebtItem
 import com.google.devtools.ksp.processing.Resolver
@@ -40,9 +41,6 @@ internal class TechDebtSymbolProcessor {
                 return@forEach
             }
 
-            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
-            ksFile?.let { allOriginatingFiles.add(it) }
-
             val annotation =
                 symbol.annotations.firstOrNull {
                     it.annotationType.resolve().declaration.qualifiedName?.asString() ==
@@ -59,6 +57,9 @@ internal class TechDebtSymbolProcessor {
                 }
 
             val name = getSymbolName(symbol)
+            val sourceLocation = getSourceLocation(symbol = symbol, sourceSet = sourceSet)
+            val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
+            ksFile?.let { allOriginatingFiles.add(it) }
 
             allItems.add(
                 TechDebtItem(
@@ -67,7 +68,7 @@ internal class TechDebtSymbolProcessor {
                     description = args["description"]?.toString().orEmpty(),
                     ticket = args["ticket"]?.toString().orEmpty(),
                     priority = priority,
-                    sourceSet = sourceSet
+                    sourceSet = sourceLocation
                 )
             )
         }

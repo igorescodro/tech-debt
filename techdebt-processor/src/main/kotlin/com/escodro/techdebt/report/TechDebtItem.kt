@@ -21,7 +21,9 @@ data class TechDebtItem(
     val ticket: String,
     val priority: String,
     val sourceSet: String,
-    val type: TechDebtItemType = TechDebtItemType.TECH_DEBT
+    val type: TechDebtItemType = TechDebtItemType.TECH_DEBT,
+    val lastModified: String? = null,
+    val author: String? = null,
 )
 
 /** Represents the type of technical debt item. */

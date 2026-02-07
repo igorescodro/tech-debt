@@ -19,11 +19,13 @@ internal class GeneratedTechDebtParser {
             if (file.exists()) {
                 val items = Json.decodeFromString<List<TechDebtItem>>(file.readText())
                 val updatedItems =
-                    if (items.any { it.sourceSet == "unknown" }) {
-                        val sourceSet = resolveSourceSet(file.absolutePath)
-                        items.map { it.copy(sourceSet = sourceSet) }
-                    } else {
-                        items
+                    items.map { item ->
+                        if (shouldResolveSourceSet(item.sourceSet)) {
+                            val sourceSet = resolveSourceSet(file.absolutePath)
+                            item.copy(sourceSet = sourceSet)
+                        } else {
+                            item
+                        }
                     }
                 allItems.addAll(updatedItems)
             }
@@ -31,13 +33,24 @@ internal class GeneratedTechDebtParser {
         return allItems
     }
 
+    private fun shouldResolveSourceSet(sourceSet: String): Boolean {
+        if (sourceSet == SOURCE_SET_UNKNOWN || sourceSet == SOURCE_SET_MAIN) return true
+        return !sourceSet.contains("/") && !sourceSet.contains("\\") && !sourceSet.contains(":")
+    }
+
     private fun resolveSourceSet(path: String): String {
         val parts = path.split("/")
         val kspIndex = parts.indexOf("ksp")
-        return if (kspIndex != -1 && kspIndex + 1 < parts.size) {
-            parts[kspIndex + 1]
-        } else {
-            "unknown"
+        if (kspIndex != -1 && kspIndex + 1 < parts.size) {
+            val sourceSetName = parts[kspIndex + 1]
+            return sourceSetName
         }
+        return SOURCE_SET_UNKNOWN
+    }
+
+    private companion object {
+
+        private const val SOURCE_SET_MAIN = "main"
+        private const val SOURCE_SET_UNKNOWN = "unknown"
     }
 }

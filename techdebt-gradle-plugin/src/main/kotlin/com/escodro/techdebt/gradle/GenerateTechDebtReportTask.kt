@@ -3,6 +3,7 @@ package com.escodro.techdebt.gradle
 import com.escodro.techdebt.gradle.model.TechDebtItem
 import com.escodro.techdebt.gradle.parser.CommentParser
 import com.escodro.techdebt.gradle.parser.GeneratedTechDebtParser
+import com.escodro.techdebt.gradle.parser.GitParser
 import com.escodro.techdebt.gradle.report.HtmlReportGenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -24,6 +25,9 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
     /** Whether to collect TODO/FIXME comments. Defaults to `false`. */
     @get:Input abstract val collectComments: Property<Boolean>
 
+    /** Whether to enable Git metadata (e.g. last modified date). Defaults to `false`. */
+    @get:Input abstract val enableGitMetadata: Property<Boolean>
+
     /**
      * Map of project directory to project path. Used to resolve the module name for TODO comments
      * without accessing the Project object at execution time.
@@ -43,25 +47,29 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
 
     private val jsonParser: GeneratedTechDebtParser = GeneratedTechDebtParser()
 
-    private val commentParser: CommentParser = CommentParser()
-
     @TaskAction
     fun generate() {
         val allItems = mutableListOf<TechDebtItem>()
         allItems += jsonParser.parse(jsonFiles)
 
+        val rootProjectDir = project.rootProject.projectDir
         if (collectComments.get()) {
             allItems +=
-                commentParser.parse(
-                    sourceFiles = sourceFiles,
-                    projectPaths = projectPathByDirectory.get()
-                )
+                CommentParser()
+                    .parse(sourceFiles = sourceFiles, projectPaths = projectPathByDirectory.get())
         }
 
         val aggregatedItems = aggregateItems(allItems)
 
+        val itemsWithMetadata =
+            if (enableGitMetadata.get()) {
+                GitParser(rootProjectDir).parse(aggregatedItems)
+            } else {
+                aggregatedItems
+            }
+
         val sortedItems =
-            aggregatedItems.sortedWith(compareBy({ it.moduleName }, { it.priorityOrder }))
+            itemsWithMetadata.sortedWith(compareBy({ it.moduleName }, { it.priorityOrder }))
 
         writeReport(sortedItems)
     }
