@@ -42,5 +42,5 @@ internal class SourceFileResolver(private val rootProjectDirectory: File) {
     }
 
     private fun fallbackSearch(path: String): File? =
-        rootProjectDirectory.walkTopDown().firstOrNull { it.isFile && it.endsWith(path) }
+        rootProjectDirectory.walkTopDown().firstOrNull { it.isFile && it.path.endsWith(path) }
 }
