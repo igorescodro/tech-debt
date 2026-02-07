@@ -38,14 +38,16 @@ internal class CommentParser {
                     val description = if (content.isEmpty()) type else "$type: $content"
 
                     val relativePath = file.relativeTo(File(projectDir)).invariantSeparatorsPath
+                    val location = "$relativePath:${index + 1}"
                     items +=
                         TechDebtItem(
                             moduleName = projectPath,
-                            sourceSet = "$relativePath:${index + 1}",
+                            sourceSet = relativePath,
                             name = "",
                             description = description,
                             ticket = "",
                             priority = "",
+                            location = location,
                             type = TechDebtItemType.COMMENT
                         )
                 }
