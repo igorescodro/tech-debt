@@ -62,7 +62,7 @@ internal class GitParser(private val rootProjectDirectory: File) {
         } catch (e: IOException) {
             logger.error("Failed to get Git info for file: $relativePath at line: $lineNumber", e)
             null
-        }catch (e: GitAPIException) {
+        } catch (e: GitAPIException) {
             logger.error("Failed to get Git blame for file: $relativePath at line: $lineNumber", e)
             null
         }
