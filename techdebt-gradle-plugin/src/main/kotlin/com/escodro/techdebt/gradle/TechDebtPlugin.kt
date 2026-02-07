@@ -29,6 +29,7 @@ class TechDebtPlugin : Plugin<Project> {
                 task.projectPathByDirectory.set(
                     project.allprojects.associate { it.projectDir.absolutePath to it.path }
                 )
+                task.rootProjectDirectory.set(project.rootProject.layout.projectDirectory)
                 task.outputFile.set(
                     extension.outputFile.convention(
                         project.layout.buildDirectory.file(

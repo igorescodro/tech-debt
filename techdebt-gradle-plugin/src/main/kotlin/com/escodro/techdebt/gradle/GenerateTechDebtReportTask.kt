@@ -7,11 +7,13 @@ import com.escodro.techdebt.gradle.parser.GitParser
 import com.escodro.techdebt.gradle.report.HtmlReportGenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -34,6 +36,9 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
      */
     @get:Input abstract val projectPathByDirectory: MapProperty<String, String>
 
+    /** The root directory of the project. Used to resolve Git metadata. */
+    @get:Internal abstract val rootProjectDirectory: DirectoryProperty
+
     /** The source files to scan for TODO comments. */
     @get:InputFiles @get:Optional abstract val sourceFiles: ConfigurableFileCollection
 
@@ -52,7 +57,7 @@ abstract class GenerateTechDebtReportTask : DefaultTask() {
         val allItems = mutableListOf<TechDebtItem>()
         allItems += jsonParser.parse(jsonFiles)
 
-        val rootProjectDir = project.rootProject.projectDir
+        val rootProjectDir = rootProjectDirectory.get().asFile
         if (collectComments.get()) {
             allItems +=
                 CommentParser()
