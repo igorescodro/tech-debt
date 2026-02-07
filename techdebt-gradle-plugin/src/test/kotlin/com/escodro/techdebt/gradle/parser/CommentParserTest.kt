@@ -49,7 +49,8 @@ internal class CommentParserTest {
         val item = items.first()
         assertEquals(":project", item.moduleName)
         assertEquals("TODO: My task", item.description)
-        assertEquals("src/main/kotlin/com/example/MyClass.kt:3", item.sourceSet)
+        assertEquals("src/main/kotlin/com/example/MyClass.kt", item.sourceSet)
+        assertEquals("src/main/kotlin/com/example/MyClass.kt:3", item.location)
         assertEquals(TechDebtItemType.COMMENT, item.type)
     }
 
