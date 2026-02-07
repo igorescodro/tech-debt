@@ -16,5 +16,6 @@ techDebtReport {
     outputFile.set(layout.projectDirectory.file("assets/report.html"))
     collectSuppress.set(true)
     collectComments.set(true)
+    enableGitMetadata.set(true)
     baseTicketUrl.set("https://github.com/igorescodro/tech-debt/issues/")
 }
