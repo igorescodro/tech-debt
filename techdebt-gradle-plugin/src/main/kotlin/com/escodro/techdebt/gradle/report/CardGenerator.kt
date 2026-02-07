@@ -61,9 +61,6 @@ internal class CardGenerator {
                     ) {
                         +item.sourceSet
                     }
-                    if (item.type == TechDebtItemType.SUPPRESS) {
-                        infoGroup("Symbol") { +item.name }
-                    }
                     if (item.lastModified != null) {
                         infoGroup("Last Modified") { +item.lastModified }
                     }
