@@ -236,6 +236,10 @@ internal class ReportStyle {
                 .info-value {
                     font-size: 14px;
                     color: #333;
+                    min-width: 0;
+                    white-space: normal;
+                    overflow-wrap: anywhere;
+                    word-break: break-word;
                 }
                 
                 .ticket {
