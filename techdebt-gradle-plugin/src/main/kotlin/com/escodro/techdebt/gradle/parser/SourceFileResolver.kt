@@ -14,10 +14,11 @@ internal class SourceFileResolver(private val rootProjectDirectory: File) {
      * @param moduleName the name of the module (e.g., ":app")
      * @return the resolved [File], or `null` if it couldn't be found
      */
-    fun resolve(sourceSet: String, moduleName: String): File? {
-        if (sourceSet == "unknown") return null
+    fun resolve(sourceSet: String?, moduleName: String): File? {
+        val path = sourceSet?.substringBeforeLast(":")
 
-        val path = sourceSet.substringBeforeLast(":")
+        if (sourceSet == "unknown" || path == null) return null
+
         val file = File(path)
         val resolvedFile =
             when {

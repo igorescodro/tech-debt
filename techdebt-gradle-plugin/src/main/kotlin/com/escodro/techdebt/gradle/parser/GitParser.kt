@@ -45,7 +45,7 @@ internal class GitParser(private val rootProjectDirectory: File) {
     }
 
     private fun getGitInfo(git: Git, item: TechDebtItem): GitInfo? {
-        val sourceFile = sourceFileResolver.resolve(item.sourceSet, item.moduleName)
+        val sourceFile = sourceFileResolver.resolve(item.location, item.moduleName)
         if (sourceFile == null || !sourceFile.exists()) {
             return null
         }

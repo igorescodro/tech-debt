@@ -68,7 +68,8 @@ internal class TechDebtSymbolProcessor {
                     description = args["description"]?.toString().orEmpty(),
                     ticket = args["ticket"]?.toString().orEmpty(),
                     priority = priority,
-                    sourceSet = sourceLocation
+                    sourceSet = sourceSet,
+                    location = sourceLocation,
                 )
             )
         }

@@ -64,7 +64,8 @@ internal class SuppressSymbolProcessor {
                         description = rule,
                         ticket = "",
                         priority = "",
-                        sourceSet = sourceLocation,
+                        sourceSet = sourceSet,
+                        location = sourceLocation,
                         type = TechDebtItemType.SUPPRESS
                     )
                 )
