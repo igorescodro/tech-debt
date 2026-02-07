@@ -91,6 +91,9 @@ techDebtReport {
 
     // Set a base URL for tickets to automatically generate links (Optional)
     baseTicketUrl.set("https://jira.myproject.com/tickets/")
+
+    // Enable Git metadata like last modified date and author (Optional, default is false)
+    enableGitMetadata.set(true)
 }
 ```
 
@@ -99,6 +102,7 @@ techDebtReport {
 - **Consolidated HTML Report**: A clean, easy-to-read summary of all technical debt from all modules in your project.
 - **Suppress Support**: Optionally collect and visualize suppressed rules (e.g., `@Suppress("MagicNumber")`) in the report.
 - **TODO/FIXME Comments Support**: Optionally collect and visualize `TODO` and `FIXME` comments from your source code.
+- **Git Metadata Support**: Optionally collect and visualize Git information (Author and Last Modified date) for each tech debt item.
 - **Priority Levels**: Support for `LOW`, `MEDIUM`, and `HIGH` priority levels (and `NONE`).
 - **Ticket Linking**: Keep track of related tickets in your issue tracking system. If `baseTicketUrl` is configured, 
 tickets will automatically become clickable links in the report.
