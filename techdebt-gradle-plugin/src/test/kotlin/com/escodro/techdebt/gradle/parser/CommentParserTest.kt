@@ -5,6 +5,7 @@ import java.io.File
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -12,7 +13,12 @@ internal class CommentParserTest {
 
     @TempDir lateinit var tempDir: File
 
-    private val parser = CommentParser()
+    private lateinit var parser: CommentParser
+
+    @BeforeEach
+    fun setup() {
+        parser = CommentParser()
+    }
 
     @Test
     fun `test parser collects TODOs from source files`() {
