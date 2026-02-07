@@ -79,14 +79,6 @@ internal class CardGenerator {
         div(classes = "info-group") {
             span(classes = "info-label") { +label }
             div(classes = "info-value") {
-                attributes["style"] =
-                    """
-                    min-width: 0;
-                    white-space: normal;
-                    overflow-wrap: anywhere;
-                    word-break: break-word;
-                    """
-                        .trimIndent()
                 block()
             }
         }
