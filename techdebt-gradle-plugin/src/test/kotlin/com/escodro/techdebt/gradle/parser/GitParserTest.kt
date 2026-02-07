@@ -104,7 +104,7 @@ internal class GitParserTest {
     }
 
     @Test
-    fun `test git parser does not skip main source set`() {
+    fun `test git parser returns null if line number is missing`() {
         val git = Git.init().setDirectory(tempDir).call()
         val file = File(tempDir, "MainFile.kt")
         file.writeText("content")
@@ -126,7 +126,7 @@ internal class GitParserTest {
         val results = parser.parse(listOf(item))
 
         assertEquals(1, results.size)
-        assertEquals("Junie", results.first().author)
+        assertNull(results.first().author)
     }
 
     @Test
@@ -144,15 +144,16 @@ internal class GitParserTest {
         git.commit().setMessage("Initial commit").setAuthor("Junie", "junie@example.com").call()
 
         val parser = GitParser(tempDir)
-        val item = TechDebtItem(
-            moduleName = ":app",
-            name = "Test",
-            description = "Test description",
-            ticket = "T-123",
-            priority = "HIGH",
-            sourceSet = "TestFile.kt:1",
-            location = file.absolutePath + ":1"
-        )
+        val item =
+            TechDebtItem(
+                moduleName = ":app",
+                name = "Test",
+                description = "Test description",
+                ticket = "T-123",
+                priority = "HIGH",
+                sourceSet = "TestFile.kt:1",
+                location = file.absolutePath + ":1"
+            )
 
         val results = parser.parse(listOf(item))
         assertEquals("Junie", results.first().author)
