@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.kotlin.gradle.plugin)
     implementation(libs.ksp.gradle.plugin)
     implementation(libs.android.gradle.plugin)
+    implementation(libs.jgit)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
