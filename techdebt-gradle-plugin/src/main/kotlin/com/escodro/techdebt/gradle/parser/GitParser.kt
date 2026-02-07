@@ -50,7 +50,7 @@ internal class GitParser(private val rootProjectDirectory: File) {
             return null
         }
 
-        val relativePath = sourceFile.relativeTo(rootProjectDirectory).path
+        val relativePath = sourceFile.relativeTo(rootProjectDirectory).path.replace(File.separatorChar, '/')
         val lineNumber = getLineNumber(item.sourceSet)
 
         return try {

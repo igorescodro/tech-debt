@@ -128,4 +128,33 @@ internal class GitParserTest {
         assertEquals(1, results.size)
         assertEquals("Junie", results.first().author)
     }
+
+    @Test
+    fun `test git parser handles OS-specific paths`() {
+        // Initialize a git repository
+        val git = Git.init().setDirectory(tempDir).call()
+
+        // Create a file in a subdirectory to have a relative path
+        val subDir = File(tempDir, "subdir").apply { mkdir() }
+        val file = File(subDir, "TestFile.kt")
+        file.writeText("content")
+
+        // In Git, the path must be forward-slash separated
+        git.add().addFilepattern("subdir/TestFile.kt").call()
+        git.commit().setMessage("Initial commit").setAuthor("Junie", "junie@example.com").call()
+
+        val parser = GitParser(tempDir)
+        val item = TechDebtItem(
+            moduleName = ":app",
+            name = "Test",
+            description = "Test description",
+            ticket = "T-123",
+            priority = "HIGH",
+            sourceSet = "TestFile.kt:1",
+            location = file.absolutePath + ":1"
+        )
+
+        val results = parser.parse(listOf(item))
+        assertEquals("Junie", results.first().author)
+    }
 }
