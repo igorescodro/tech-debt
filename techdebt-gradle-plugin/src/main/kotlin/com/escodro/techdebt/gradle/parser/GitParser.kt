@@ -46,12 +46,13 @@ internal class GitParser(private val rootProjectDirectory: File) {
 
     private fun getGitInfo(git: Git, item: TechDebtItem): GitInfo? {
         val sourceFile = sourceFileResolver.resolve(item.location, item.moduleName)
-        if (sourceFile == null || !sourceFile.exists()) {
+        val lineNumber = getLineNumber(item.sourceSet)
+        if (sourceFile == null || !sourceFile.exists() || lineNumber == null) {
             return null
         }
 
-        val relativePath = sourceFile.relativeTo(rootProjectDirectory).path.replace(File.separatorChar, '/')
-        val lineNumber = getLineNumber(item.sourceSet)
+        val relativePath =
+            sourceFile.relativeTo(rootProjectDirectory).path.replace(File.separatorChar, '/')
 
         return try {
             val blame =
@@ -97,8 +98,8 @@ internal class GitParser(private val rootProjectDirectory: File) {
             null
         }
 
-    private fun getLineNumber(sourceSet: String): Int =
-        sourceSet.substringAfterLast(":").toIntOrNull() ?: 1
+    private fun getLineNumber(sourceSet: String): Int? =
+        sourceSet.substringAfterLast(":").toIntOrNull()
 }
 
 /**
