@@ -12,6 +12,9 @@ import kotlinx.serialization.Serializable
  * @property priority the priority of the tech debt
  * @property sourceSet the source set where the tech debt is located
  * @property type the type of the tech debt item
+ * @property lastModified the last time the tech debt was modified
+ * @property location the location of the tech debt in the source code
+ * @property author the author of the tech debt
  */
 @Serializable
 data class TechDebtItem(
