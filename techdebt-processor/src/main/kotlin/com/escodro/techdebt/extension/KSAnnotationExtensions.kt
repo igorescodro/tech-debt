@@ -5,7 +5,6 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
-import com.google.devtools.ksp.symbol.Location
 
 /**
  * Returns the name of the given symbol, which can be a declaration or a file.
@@ -27,10 +26,8 @@ fun getSymbolName(symbol: KSAnnotated): String =
  * @param sourceSet the source set name
  * @return the source location
  */
-fun getAnnotationLocation(annotation: KSAnnotation, sourceSet: String): String =
-    getLocation(annotation.location, sourceSet)
-
-private fun getLocation(location: Location, sourceSet: String): String {
+fun getAnnotationLocation(annotation: KSAnnotation, sourceSet: String): String {
+    val location = annotation.location
     val sourceLocation =
         if (location is FileLocation) {
             "${location.filePath}:${location.lineNumber}"
