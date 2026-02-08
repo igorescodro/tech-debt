@@ -1,6 +1,6 @@
 package com.escodro.techdebt.processor
 
-import com.escodro.techdebt.extension.getSourceLocation
+import com.escodro.techdebt.extension.getAnnotationLocation
 import com.escodro.techdebt.extension.getSymbolName
 import com.escodro.techdebt.report.TechDebtItem
 import com.escodro.techdebt.report.TechDebtItemType
@@ -52,7 +52,11 @@ internal class SuppressSymbolProcessor {
                 }
 
             val name = getSymbolName(symbol)
-            val sourceLocation = getSourceLocation(symbol = symbol, sourceSet = sourceSet)
+            val sourceLocation =
+                getAnnotationLocation(
+                    annotation = suppressAnnotations.first(),
+                    sourceSet = sourceSet
+                )
             val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
             ksFile?.let { allOriginatingFiles.add(it) }
 

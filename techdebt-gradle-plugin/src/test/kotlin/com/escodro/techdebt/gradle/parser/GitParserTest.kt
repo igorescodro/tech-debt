@@ -31,7 +31,7 @@ internal class GitParserTest {
                 description = "Test description",
                 ticket = "T-123",
                 priority = "HIGH",
-                sourceSet = "TestFile.kt:1",
+                sourceSet = "main", // Realistic sourceSet name
                 location = file.absolutePath + ":1"
             )
 
@@ -119,8 +119,8 @@ internal class GitParserTest {
                 description = "Test description",
                 ticket = "T-123",
                 priority = "HIGH",
-                sourceSet = "MainFile.kt", // Simulating when KSP returns just a filename
-                location = file.absolutePath + ":1"
+                sourceSet = "main",
+                location = file.absolutePath // No line number here
             )
 
         val results = parser.parse(listOf(item))
@@ -157,5 +157,35 @@ internal class GitParserTest {
 
         val results = parser.parse(listOf(item))
         assertEquals("Junie", results.first().author)
+    }
+
+    @Test
+    fun `test git parser does not return info for uncommitted changes`() {
+        val git = Git.init().setDirectory(tempDir).call()
+        val file = File(tempDir, "TestFile.kt")
+        file.writeText("committed content\n")
+        git.add().addFilepattern("TestFile.kt").call()
+        git.commit().setMessage("Initial commit").setAuthor("Junie", "junie@example.com").call()
+
+        // Add a new line that is NOT committed
+        file.appendText("uncommitted content")
+
+        val parser = GitParser(tempDir)
+        val item =
+            TechDebtItem(
+                moduleName = ":app",
+                name = "Test",
+                description = "Test description",
+                ticket = "T-123",
+                priority = "HIGH",
+                sourceSet = "main",
+                location = file.absolutePath + ":2"
+            )
+
+        val results = parser.parse(listOf(item))
+
+        assertEquals(1, results.size)
+        assertNull(results.first().author)
+        assertNull(results.first().lastModified)
     }
 }
