@@ -1,7 +1,6 @@
 package com.escodro.techdebt.gradle.extension
 
 import com.escodro.techdebt.gradle.GenerateTechDebtReportTask
-import com.escodro.techdebt.gradle.TechDebtExtension
 import com.google.devtools.ksp.gradle.KspExtension
 import java.util.Locale.getDefault
 import org.gradle.api.Project
