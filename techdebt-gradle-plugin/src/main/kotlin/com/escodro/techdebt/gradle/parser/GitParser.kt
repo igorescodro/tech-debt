@@ -1,5 +1,6 @@
 package com.escodro.techdebt.gradle.parser
 
+import com.escodro.techdebt.gradle.extension.SourceFileResolver
 import com.escodro.techdebt.gradle.model.TechDebtItem
 import java.io.File
 import java.io.IOException
