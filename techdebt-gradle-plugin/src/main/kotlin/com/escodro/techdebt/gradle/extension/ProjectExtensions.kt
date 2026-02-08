@@ -52,11 +52,11 @@ fun Project.configureKmpPlugins() {
         extensions.getByType(KotlinMultiplatformExtension::class.java).targets.all { target ->
             if (target.name == KMP_METADATA_TARGET) return@all
 
-            val target: String =
+            val targetName: String =
                 target.name.replaceFirstChar {
                     if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString()
                 }
-            val configurationName = "$KSP_PARAM$target"
+            val configurationName = "$KSP_PARAM$targetName"
 
             // Check if the configuration exists before adding the dependency
             if (configurations.findByName(configurationName) != null) {

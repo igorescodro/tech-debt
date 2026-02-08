@@ -43,7 +43,8 @@ internal class TechDebtSymbolProcessor {
 
             val annotation =
                 symbol.annotations.firstOrNull { annotation ->
-                    annotation.annotationType.resolve().declaration.qualifiedName?.asString() == TechDebtAnnotationName
+                    annotation.annotationType.resolve().declaration.qualifiedName?.asString() ==
+                        TechDebtAnnotationName
                 } ?: return@forEach
 
             val args = annotation.arguments.associate { it.name!!.asString() to it.value }

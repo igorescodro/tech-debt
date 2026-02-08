@@ -10,6 +10,7 @@ private const val VERSION_PROPERTY = "version"
  * Returns the current version of the plugin. The version is loaded from the `techdebt.properties`
  * file.
  *
+ * @param resourceName the resource name to load the version from. Defaults to `techdebt.properties`
  * @return the plugin version
  */
 fun getPluginVersion(
