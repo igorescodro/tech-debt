@@ -41,8 +41,7 @@ internal class GeneratedTechDebtParser {
         val parts = path.split("/")
         val kspIndex = parts.indexOf("ksp")
         if (kspIndex != -1 && kspIndex + 1 < parts.size) {
-            val sourceSetName = parts[kspIndex + 1]
-            return sourceSetName
+            return parts[kspIndex + 1]
         }
         return SOURCE_SET_UNKNOWN
     }
