@@ -8,7 +8,7 @@ class PropertiesExtensionsTest {
 
     @Test
     fun `test getPluginVersion returns version from properties file`() {
-        val version = getPluginVersion()
+        val version = getPluginVersion("techdebt.properties")
         assertEquals("0.4.0", version)
     }
 
