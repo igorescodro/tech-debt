@@ -1,4 +1,4 @@
-package com.escodro.techdebt.gradle.parser
+package com.escodro.techdebt.gradle.extension
 
 import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
