@@ -53,10 +53,11 @@ fun Project.configureKmpPlugins() {
         extensions.getByType(KotlinMultiplatformExtension::class.java).targets.all { target ->
             if (target.name == KMP_METADATA_TARGET) return@all
 
-            val configurationName =
-                "ksp${target.name.replaceFirstChar {
+            val target: String =
+                target.name.replaceFirstChar {
                     if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString()
-                }}"
+                }
+            val configurationName = "$KSP_PARAM$target"
 
             // Check if the configuration exists before adding the dependency
             if (configurations.findByName(configurationName) != null) {
@@ -67,7 +68,7 @@ fun Project.configureKmpPlugins() {
             } else {
                 // Fallback: Use the general 'ksp' configuration if the specific one doesn't
                 // exist or just skip it if it's not applicable for this target.
-                dependencies.add("ksp", "$TECH_DEBT_PROCESSOR_DEPENDENCY:${getPluginVersion()}")
+                dependencies.add(KSP_PARAM, "$TECH_DEBT_PROCESSOR_DEPENDENCY:${getPluginVersion()}")
             }
         }
         dependencies.add(
