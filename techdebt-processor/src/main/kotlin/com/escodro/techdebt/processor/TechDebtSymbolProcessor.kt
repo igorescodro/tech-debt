@@ -1,7 +1,7 @@
 package com.escodro.techdebt.processor
 
 import com.escodro.techdebt.TechDebt
-import com.escodro.techdebt.extension.getSourceLocation
+import com.escodro.techdebt.extension.getAnnotationLocation
 import com.escodro.techdebt.extension.getSymbolName
 import com.escodro.techdebt.report.TechDebtItem
 import com.google.devtools.ksp.processing.Resolver
@@ -57,7 +57,8 @@ internal class TechDebtSymbolProcessor {
                 }
 
             val name = getSymbolName(symbol)
-            val sourceLocation = getSourceLocation(symbol = symbol, sourceSet = sourceSet)
+            val sourceLocation =
+                getAnnotationLocation(annotation = annotation, sourceSet = sourceSet)
             val ksFile = symbol as? KSFile ?: (symbol as? KSDeclaration)?.containingFile
             ksFile?.let { allOriginatingFiles.add(it) }
 
