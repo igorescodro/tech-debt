@@ -38,6 +38,8 @@ h1 {
 .medium { background-color: #F5A623; }
 .low { background-color: #4CAF50; }
 .none { background-color: #9E9E9E; }
+.comments { background-color: #1A237E; }
+.suppressed { background-color: #607D8B; }
                 .action-container {
     margin-bottom: 20px;
     display: flex;
@@ -215,7 +217,7 @@ function collapseAll() {
     <h1>Tech Debt Report</h1>
     <div class="summary-container">
       <div class="summary-box total">
-        <h2>5</h2>
+        <h2>10</h2>
 <span>Total Items</span></div>
       <div class="summary-box high">
         <h2>2</h2>
@@ -229,6 +231,12 @@ function collapseAll() {
       <div class="summary-box none">
         <h2>1</h2>
 <span>No Priority</span></div>
+      <div class="summary-box comments">
+        <h2>4</h2>
+<span>Comments</span></div>
+      <div class="summary-box suppressed">
+        <h2>1</h2>
+<span>Suppressed</span></div>
     </div>
     <div class="action-container"><button type="button" class="action-button" onclick="expandAll()">Expand All</button><button type="button" class="action-button" onclick="collapseAll()">Collapse All</button></div>
     <h2>Annotated Tech Debt</h2>

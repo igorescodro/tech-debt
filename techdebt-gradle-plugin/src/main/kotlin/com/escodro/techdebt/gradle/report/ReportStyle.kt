@@ -72,6 +72,8 @@ internal class ReportStyle {
                 .medium { background-color: #F5A623; }
                 .low { background-color: #4CAF50; }
                 .none { background-color: #9E9E9E; }
+                .comments { background-color: #1A237E; }
+                .suppressed { background-color: #607D8B; }
     """
             .trimIndent()
 

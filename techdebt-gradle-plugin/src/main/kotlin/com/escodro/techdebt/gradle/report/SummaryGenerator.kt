@@ -17,6 +17,8 @@ internal class SummaryGenerator {
      * @param mediumItems the number of medium priority items
      * @param lowItems the number of low priority items
      * @param noneItems the number of items without priority
+     * @param commentItems the number of comment items
+     * @param suppressedItems the number of suppressed items
      */
     @Suppress("LongParameterList")
     fun append(
@@ -25,7 +27,9 @@ internal class SummaryGenerator {
         highItems: Int,
         mediumItems: Int,
         lowItems: Int,
-        noneItems: Int
+        noneItems: Int,
+        commentItems: Int,
+        suppressedItems: Int
     ) {
         body.div(classes = "summary-container") {
             div(classes = "summary-box total") {
@@ -47,6 +51,14 @@ internal class SummaryGenerator {
             div(classes = "summary-box none") {
                 h2 { +noneItems.toString() }
                 span { +"No Priority" }
+            }
+            div(classes = "summary-box comments") {
+                h2 { +commentItems.toString() }
+                span { +"Comments" }
+            }
+            div(classes = "summary-box suppressed") {
+                h2 { +suppressedItems.toString() }
+                span { +"Suppressed" }
             }
         }
     }

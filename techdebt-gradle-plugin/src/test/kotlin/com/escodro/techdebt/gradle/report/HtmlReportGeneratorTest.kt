@@ -77,8 +77,9 @@ internal class HtmlReportGeneratorTest {
         assertTrue(html.contains("Annotated Tech Debt"))
         assertTrue(html.contains("Suppressed Rules"))
         assertTrue(html.contains("Rule1"))
-        // Suppressed item should not be counted in the summary
-        assertTrue(html.contains("<h2>1</h2>"), "Should contain only 1 in summary total")
+        // Suppressed item should be counted in the summary total now
+        assertTrue(html.contains("<h2>2</h2>"), "Should contain total 2 in summary total")
+        assertTrue(html.contains("Suppressed"), "Should contain Suppressed in summary")
     }
 
     @Test
@@ -144,6 +145,28 @@ internal class HtmlReportGeneratorTest {
 
         assertTrue(html.contains("Expand All"))
         assertTrue(html.contains("Collapse All"))
+    }
+
+    @Test
+    fun `test generator counts comments and suppressed items in summary`() {
+        val items =
+            listOf(
+                createItem(module = "A", priority = "HIGH", type = TechDebtItemType.TECH_DEBT),
+                createItem(module = "A", priority = "NONE", type = TechDebtItemType.COMMENT),
+                createItem(module = "B", priority = "NONE", type = TechDebtItemType.COMMENT),
+                createItem(module = "C", priority = "NONE", type = TechDebtItemType.SUPPRESS)
+            )
+
+        val writer = StringWriter()
+        generator.generate(writer, items)
+        val html = writer.toString()
+
+        assertTrue(html.contains("<h2>4</h2>"), "Total items should be 4")
+        assertTrue(html.contains("<h2>1</h2>"), "High priority should be 1")
+        assertTrue(html.contains("<h2>2</h2>"), "Comments should be 2")
+        assertTrue(html.contains("<h2>1</h2>"), "Suppressed should be 1")
+        assertTrue(html.contains("Comments"), "Label 'Comments' should be present")
+        assertTrue(html.contains("Suppressed"), "Label 'Suppressed' should be present")
     }
 
     private fun createItem(
