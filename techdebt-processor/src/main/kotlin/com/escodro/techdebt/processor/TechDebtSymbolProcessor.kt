@@ -35,16 +35,15 @@ internal class TechDebtSymbolProcessor {
         sourceSet: String,
         unableToProcess: MutableList<KSAnnotated>
     ) {
-        resolver.getSymbolsWithAnnotation(TechDebt::class.qualifiedName!!).forEach { symbol ->
+        resolver.getSymbolsWithAnnotation(TechDebtAnnotationName).forEach { symbol ->
             if (!symbol.validate()) {
                 unableToProcess.add(symbol)
                 return@forEach
             }
 
             val annotation =
-                symbol.annotations.firstOrNull {
-                    it.annotationType.resolve().declaration.qualifiedName?.asString() ==
-                        TechDebt::class.qualifiedName
+                symbol.annotations.firstOrNull { annotation ->
+                    annotation.annotationType.resolve().declaration.qualifiedName?.asString() == TechDebtAnnotationName
                 } ?: return@forEach
 
             val args = annotation.arguments.associate { it.name!!.asString() to it.value }
@@ -74,5 +73,9 @@ internal class TechDebtSymbolProcessor {
                 )
             )
         }
+    }
+
+    companion object {
+        private val TechDebtAnnotationName: String = TechDebt::class.qualifiedName!!
     }
 }
