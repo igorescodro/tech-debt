@@ -29,14 +29,14 @@ internal class SuppressSymbolProcessor {
         moduleName: String,
         sourceSet: String
     ) {
-        resolver.getSymbolsWithAnnotation(Suppress::class.qualifiedName!!).forEach { symbol ->
+        resolver.getSymbolsWithAnnotation(SuppressName).forEach { symbol ->
             if (!symbol.validate()) return@forEach
 
             val suppressAnnotations =
                 symbol.annotations
-                    .filter {
-                        it.annotationType.resolve().declaration.qualifiedName?.asString() ==
-                            Suppress::class.qualifiedName
+                    .filter { annotation ->
+                        annotation.annotationType.resolve().declaration.qualifiedName?.asString() ==
+                            SuppressName
                     }
                     .toList()
             if (suppressAnnotations.isEmpty()) return@forEach
@@ -75,5 +75,9 @@ internal class SuppressSymbolProcessor {
                 )
             }
         }
+    }
+
+    companion object {
+        private val SuppressName: String = Suppress::class.qualifiedName!!
     }
 }
