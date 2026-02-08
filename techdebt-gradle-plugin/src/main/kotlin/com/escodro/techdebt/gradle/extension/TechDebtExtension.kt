@@ -1,4 +1,4 @@
-package com.escodro.techdebt.gradle
+package com.escodro.techdebt.gradle.extension
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property

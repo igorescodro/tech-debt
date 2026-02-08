@@ -1,5 +1,6 @@
 package com.escodro.techdebt.gradle
 
+import com.escodro.techdebt.gradle.extension.TechDebtExtension
 import com.escodro.techdebt.gradle.extension.configureAndroidPlugins
 import com.escodro.techdebt.gradle.extension.configureJvmPlugins
 import com.escodro.techdebt.gradle.extension.configureKmpPlugins
