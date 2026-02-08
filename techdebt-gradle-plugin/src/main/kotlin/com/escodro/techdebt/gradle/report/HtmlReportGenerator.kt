@@ -32,7 +32,7 @@ internal class HtmlReportGenerator(
      */
     fun generate(writer: Writer, items: List<TechDebtItem>, baseTicketUrl: String? = null) {
         val (techDebtItems, suppressedItems, commentItems) = filterItems(items)
-        val summary = calculateSummary(techDebtItems)
+        val summary = calculateSummary(techDebtItems, commentItems, suppressedItems)
 
         writer.appendHTML().html {
             appendHead(this)
@@ -56,13 +56,19 @@ internal class HtmlReportGenerator(
         return Triple(techDebtItems, suppressedItems, commentItems)
     }
 
-    private fun calculateSummary(techDebtItems: List<TechDebtItem>): SummaryData =
+    private fun calculateSummary(
+        techDebtItems: List<TechDebtItem>,
+        commentItems: List<TechDebtItem>,
+        suppressedItems: List<TechDebtItem>
+    ): SummaryData =
         SummaryData(
-            total = techDebtItems.size,
+            total = techDebtItems.size + commentItems.size + suppressedItems.size,
             high = techDebtItems.count { it.priority == "HIGH" },
             medium = techDebtItems.count { it.priority == "MEDIUM" },
             low = techDebtItems.count { it.priority == "LOW" },
-            none = techDebtItems.count { it.priority == "NONE" }
+            none = techDebtItems.count { it.priority == "NONE" },
+            comments = commentItems.size,
+            suppressed = suppressedItems.size
         )
 
     private fun appendHead(html: HTML) {
@@ -102,7 +108,9 @@ internal class HtmlReportGenerator(
                 highItems = summary.high,
                 mediumItems = summary.medium,
                 lowItems = summary.low,
-                noneItems = summary.none
+                noneItems = summary.none,
+                commentItems = summary.comments,
+                suppressedItems = summary.suppressed
             )
 
             appendActionButtons(this)
@@ -148,6 +156,8 @@ internal class HtmlReportGenerator(
         val high: Int,
         val medium: Int,
         val low: Int,
-        val none: Int
+        val none: Int,
+        val comments: Int,
+        val suppressed: Int
     )
 }
